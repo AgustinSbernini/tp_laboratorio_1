@@ -12,6 +12,14 @@
 #include <stdlib.h>
 
 int main(void) {
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
+	char respuesta;
+
+	setbuf(stdout, NULL);
+
+	printf("Esto funciona?");
+	scanf("%c",&respuesta);
+
+
+
 	return EXIT_SUCCESS;
 }
