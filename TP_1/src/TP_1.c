@@ -1,25 +1,120 @@
-/*
- ============================================================================
- Name        : TP_1.c
- Author      : 
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
- ============================================================================
- */
+/*******************************************************************
+*	Programa:EjemploClaseX­
+*
+*	Objetivo:
+	Una agencia de viaje necesita calcular costos para sus vuelos
+	de Latam y Aerolíneas Argentinas para ofrecerlos a sus clientes.
+	Se deberá ingresar por cada vuelo los km totales y el precio total del mismo.
+	El objetivo de la aplicación es mostrar las diferentes opciones de pagos a sus clientes.
+*
+*	Version: 0.1 del 1 de Abril de 2022
+*	Autor: Agustin Sbernini
+*
+********************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(void) {
-	char respuesta;
+#include "funciones.h"
 
+int main(void) {
+	int opcion;
+	float kilometros;
+	char latamOAerolineas;
+	float precioVueloAerolineas;
+	float precioVueloLatam;
+	float tarjetaDebitoA;
+	float tarjetaDebitoL;
+	float tarjetaCreditoA;
+	float tarjetaCreditoL;
+	float bitcoinA;
+	float bitcoinL;
+	float precioPorKmA;
+	float precioPorKmL;
+	float difPrecioAeroLatam;
+
+	opcion = 0;
+	precioVueloAerolineas = 0;
+	precioVueloLatam = 0;
 	setbuf(stdout, NULL);
 
-	printf("Esto funciona?");
-	scanf("%c",&respuesta);
+	do{
+		printf("\nSeleccione una opción del menú:"
+				"\n1. Ingresar Kilometros: "
+				"\n2. Ingresar el precio del vuelo: "
+				"\n3. Calcular los costos: "
+				"\n4. Informar los resultados: "
+				"\n5. Carga forzada de datos."
+				"\n6. Salir.");
+		fflush(stdin);
+		scanf("%d", &opcion);
 
+		switch (opcion)
+		{
+			case 1:
+				do{
+					printf("Ingresar Kilómetros: ");
+					fflush(stdin);
+					scanf("%f",&kilometros);
+				}while(kilometros <0);
+				break;
 
+			case 2:
+				do{
+					printf("Desea ingresar el precio de Aerolineas o de Latam? "
+							"\n(Solo una a la vez, responda 'a' para Aerolineas o 'l' para Latam):");
+					fflush(stdin);
+					scanf("%c",&latamOAerolineas);
+					switch(latamOAerolineas)
+					{
+						case 'a':
+							do{
+								printf("Ingresar el precio del vuelo de Aerolíneas: $");
+								fflush(stdin);
+								scanf("%f",&precioVueloAerolineas);
+							}while(precioVueloAerolineas < 0);
+						break;
 
-	return EXIT_SUCCESS;
+						case 'l':
+							do{
+								printf("Ingresar el precio del vuelo de Latam: $");
+								fflush(stdin);
+								scanf("%f",&precioVueloLatam);
+							}while(precioVueloLatam < 0);
+						break;
+					}
+				}while(latamOAerolineas != 'a' && latamOAerolineas != 'l');
+				break;
+
+			case 3:
+				if (precioVueloLatam > 0 || precioVueloAerolineas > 0)
+				{
+					calcularAerolineas (precioVueloAerolineas, kilometros, &tarjetaDebitoA, &tarjetaCreditoA, &bitcoinA, &precioPorKmA);
+					calcularLatam (precioVueloLatam, kilometros,&tarjetaDebitoL, &tarjetaCreditoL, &bitcoinL, &precioPorKmL);
+					difPrecioAeroLatam = calcularDif(precioVueloLatam, precioVueloAerolineas);
+					printf("\nLas cuentas ya estan realizadas y listas para mostrarse\n");
+				}
+				else
+				{
+					printf("No ingresó ningún precio de vuelo");
+				}
+				break;
+
+			case 4:
+
+				mostrarInformacionA (precioVueloAerolineas, kilometros, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
+
+				mostrarInformacionL (precioVueloLatam, kilometros, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
+
+				mostrarDiferencia (difPrecioAeroLatam);
+				break;
+			case 5:
+				datosForzados (162965, 159339, 7090);
+				break;
+		}
+	}while(opcion != 6);
+
+	printf("Gracias por su visita, vuelva pronto!");
+
+	return 0;
 }
