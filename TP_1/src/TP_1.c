@@ -1,5 +1,5 @@
 /*******************************************************************
-*	Programa:EjemploClaseX­
+*	Programa: TP 1
 *
 *	Objetivo:
 	Una agencia de viaje necesita calcular costos para sus vuelos
@@ -7,7 +7,7 @@
 	Se deberá ingresar por cada vuelo los km totales y el precio total del mismo.
 	El objetivo de la aplicación es mostrar las diferentes opciones de pagos a sus clientes.
 *
-*	Version: 0.1 del 1 de Abril de 2022
+*	Version: 0.2 del 9 de Abril de 2022
 *	Autor: Agustin Sbernini
 *
 ********************************************************************/
@@ -32,20 +32,32 @@ int main(void) {
 	float precioPorKmA;
 	float precioPorKmL;
 	float difPrecioAeroLatam;
+	int kilometrosForzados;
+	int precioAerolineasForzado;
+	int precioLatamForzado;
 
-	opcion = 0;
-	precioVueloAerolineas = 0;
-	precioVueloLatam = 0;
 	setbuf(stdout, NULL);
 
+	opcion = 0;
+	kilometros = 0;
+	precioVueloAerolineas = 0;
+	precioVueloLatam = 0;
+	kilometrosForzados = 7090;
+	precioAerolineasForzado = 162965;
+	precioLatamForzado = 159339;
+
 	do{
-		printf("\nSeleccione una opción del menú:"
-				"\n1. Ingresar Kilometros: "
-				"\n2. Ingresar el precio del vuelo: "
-				"\n3. Calcular los costos: "
-				"\n4. Informar los resultados: "
+		printf("\nMenú principal:"
+				"\n1. Ingresar Kilometros."
+				"\n- Kilometros Ingresados: %.2f"
+				"\n2. Ingresar el precio del vuelo."
+				"\n- Precio vuelo Aerolineas: %.2f"
+				"\n- Precio vuelo Latam: %.2f"
+				"\n3. Calcular los costos."
+				"\n4. Informar los resultados."
 				"\n5. Carga forzada de datos."
-				"\n6. Salir.");
+				"\n6. Salir."
+				"\n\nSeleccione una opción: ", kilometros, precioVueloAerolineas, precioVueloLatam);
 		fflush(stdin);
 		scanf("%d", &opcion);
 
@@ -56,7 +68,7 @@ int main(void) {
 					printf("Ingresar Kilómetros: ");
 					fflush(stdin);
 					scanf("%f",&kilometros);
-				}while(kilometros <0);
+				}while(kilometros < 0);
 				break;
 
 			case 2:
@@ -96,7 +108,7 @@ int main(void) {
 				}
 				else
 				{
-					printf("No ingresó ningún precio de vuelo");
+					printf("\nNo ingresó ningún precio de vuelo\n");
 				}
 				break;
 
@@ -109,12 +121,18 @@ int main(void) {
 				mostrarDiferencia (difPrecioAeroLatam);
 				break;
 			case 5:
-				datosForzados (162965, 159339, 7090);
+				calcularAerolineas (precioAerolineasForzado, kilometrosForzados, &tarjetaDebitoA, &tarjetaCreditoA, &bitcoinA, &precioPorKmA);
+				calcularLatam (precioLatamForzado, kilometrosForzados,&tarjetaDebitoL, &tarjetaCreditoL, &bitcoinL, &precioPorKmL);
+				difPrecioAeroLatam = calcularDif(precioLatamForzado, precioAerolineasForzado);
+
+				mostrarInformacionA (precioAerolineasForzado, kilometrosForzados, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
+				mostrarInformacionL (precioLatamForzado, kilometrosForzados, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
+				mostrarDiferencia (difPrecioAeroLatam);
 				break;
 		}
 	}while(opcion != 6);
 
-	printf("Gracias por su visita, vuelva pronto!");
+	printf("\nGracias por su visita, vuelva pronto!");
 
 	return 0;
 }
