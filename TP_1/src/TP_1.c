@@ -7,7 +7,7 @@
 	Se deberá ingresar por cada vuelo los km totales y el precio total del mismo.
 	El objetivo de la aplicación es mostrar las diferentes opciones de pagos a sus clientes.
 *
-*	Version: 0.2 del 9 de Abril de 2022
+*	Version: 1.0 del 10 de Abril de 2022
 *	Autor: Agustin Sbernini
 *
 ********************************************************************/
@@ -31,6 +31,7 @@ int main(void) {
 	float bitcoinL;
 	float precioPorKmA;
 	float precioPorKmL;
+	int banderaFuncion;
 	float difPrecioAeroLatam;
 	int kilometrosForzados;
 	int precioAerolineasForzado;
@@ -42,6 +43,7 @@ int main(void) {
 	kilometros = 0;
 	precioVueloAerolineas = 0;
 	precioVueloLatam = 0;
+	banderaFuncion = 0;
 	kilometrosForzados = 7090;
 	precioAerolineasForzado = 162965;
 	precioLatamForzado = 159339;
@@ -64,11 +66,7 @@ int main(void) {
 		switch (opcion)
 		{
 			case 1:
-				do{
-					printf("Ingresar Kilómetros: ");
-					fflush(stdin);
-					scanf("%f",&kilometros);
-				}while(kilometros < 0);
+				kilometros = validarQueSeaMayorA (kilometros ,"Ingresar Kilómetros: ", 0);
 				break;
 
 			case 2:
@@ -80,49 +78,47 @@ int main(void) {
 					switch(latamOAerolineas)
 					{
 						case 'a':
-							do{
-								printf("Ingresar el precio del vuelo de Aerolíneas: $");
-								fflush(stdin);
-								scanf("%f",&precioVueloAerolineas);
-							}while(precioVueloAerolineas < 0);
-						break;
+							precioVueloAerolineas = validarQueSeaMayorA (precioVueloAerolineas ,"Ingresar el precio del vuelo de Aerolíneas: $", 0);
+							break;
 
 						case 'l':
-							do{
-								printf("Ingresar el precio del vuelo de Latam: $");
-								fflush(stdin);
-								scanf("%f",&precioVueloLatam);
-							}while(precioVueloLatam < 0);
-						break;
+							precioVueloLatam = validarQueSeaMayorA (precioVueloLatam ,"Ingresar el precio del vuelo de Latam: $", 0);
+							break;
 					}
 				}while(latamOAerolineas != 'a' && latamOAerolineas != 'l');
 				break;
 
 			case 3:
-				if (precioVueloLatam > 0 || precioVueloAerolineas > 0)
+				if (kilometros > 0 && (precioVueloLatam > 0 || precioVueloAerolineas > 0))
 				{
-					calcularAerolineas (precioVueloAerolineas, kilometros, &tarjetaDebitoA, &tarjetaCreditoA, &bitcoinA, &precioPorKmA);
-					calcularLatam (precioVueloLatam, kilometros,&tarjetaDebitoL, &tarjetaCreditoL, &bitcoinL, &precioPorKmL);
+					calcularPrecios (precioVueloAerolineas, kilometros, &tarjetaDebitoA, &tarjetaCreditoA, &bitcoinA, &precioPorKmA, &banderaFuncion);
+					calcularPrecios (precioVueloLatam, kilometros,&tarjetaDebitoL, &tarjetaCreditoL, &bitcoinL, &precioPorKmL, &banderaFuncion);
 					difPrecioAeroLatam = calcularDif(precioVueloLatam, precioVueloAerolineas);
 					printf("\nLas cuentas ya estan realizadas y listas para mostrarse\n");
 				}
 				else
 				{
-					printf("\nNo ingresó ningún precio de vuelo\n");
+					printf("\nNo ingresó el precio de ningún vuelo o no ingresó kilometros del vuelo.\n");
 				}
 				break;
 
 			case 4:
+				if (banderaFuncion == 0)
+				{
+					printf("\nTodavía no calculó los costos del vuelo.\n");
+				}
+				else
+				{
+					mostrarInformacionA (precioVueloAerolineas, kilometros, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
 
-				mostrarInformacionA (precioVueloAerolineas, kilometros, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
+					mostrarInformacionL (precioVueloLatam, kilometros, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
 
-				mostrarInformacionL (precioVueloLatam, kilometros, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
-
-				mostrarDiferencia (difPrecioAeroLatam);
+					mostrarDiferencia (difPrecioAeroLatam);
+				}
 				break;
 			case 5:
-				calcularAerolineas (precioAerolineasForzado, kilometrosForzados, &tarjetaDebitoA, &tarjetaCreditoA, &bitcoinA, &precioPorKmA);
-				calcularLatam (precioLatamForzado, kilometrosForzados,&tarjetaDebitoL, &tarjetaCreditoL, &bitcoinL, &precioPorKmL);
+				calcularPrecios (precioAerolineasForzado, kilometrosForzados, &tarjetaDebitoA, &tarjetaCreditoA, &bitcoinA, &precioPorKmA, &banderaFuncion);
+				calcularPrecios (precioLatamForzado, kilometrosForzados,&tarjetaDebitoL, &tarjetaCreditoL, &bitcoinL, &precioPorKmL, &banderaFuncion);
 				difPrecioAeroLatam = calcularDif(precioLatamForzado, precioAerolineasForzado);
 
 				mostrarInformacionA (precioAerolineasForzado, kilometrosForzados, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
