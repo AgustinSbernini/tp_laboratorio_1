@@ -8,7 +8,7 @@
   Mayor al numero indicado
  */
 
-float validarQueSeaMayorA (float variableAComparar, char textoAImprimir[50], int mayorA)
+float validarQueSeaMayorA (float variableAComparar, char textoAImprimir[50], float mayorA)
 {
 	do{
 		printf(textoAImprimir);
@@ -26,7 +26,7 @@ float validarQueSeaMayorA (float variableAComparar, char textoAImprimir[50], int
   También levanta la bandera para que se pueda acceder al siguiente menú
 */
 
-int calcularPrecios (float precio, float km, float* tarjetaDebito, float* tarjetaCredito, float* bitcoin, float* precioPorKm, int* bandera)
+void calcularPrecios (float precio, float km, float* tarjetaDebito, float* tarjetaCredito, float* bitcoin, float* precioPorKm, int* bandera)
 {
 	float descuentoDebito;
 	float descuentoCredito;
@@ -41,13 +41,11 @@ int calcularPrecios (float precio, float km, float* tarjetaDebito, float* tarjet
 	*tarjetaCredito = (precio*descuentoCredito);
 	*bitcoin = (precio / valorBitcoin);
 	*precioPorKm = (precio / km);
-
-	return 0;
 }
 
 // Calcula la diferencia entre dos precios y retorna el resultado.
 
-int calcularDif(float precioA, float precioL)
+float calcularDif(float precioA, float precioL)
 {
 	float resultado;
 
@@ -72,7 +70,7 @@ int calcularDif(float precioA, float precioL)
 
 // Imprime los precios previamente calculados o avisa que no se ingresaron vuelos
 
-int mostrarInformacionA(float precioA, float km, float tarjetaDebitoA, float tarjetaCreditoA, float bitcoinA, float precioPorKmA)
+void mostrarInformacionA(float precioA, float km, float tarjetaDebitoA, float tarjetaCreditoA, float bitcoinA, float precioPorKmA)
 {
 	printf("\nKMs Ingresados: %.2f km\n",km);
 
@@ -88,11 +86,9 @@ int mostrarInformacionA(float precioA, float km, float tarjetaDebitoA, float tar
 	{
 		printf("\nNo se ingresaron vuelos de Aerolineas\n");
 	}
-
-	return 0;
 }
 
-int mostrarInformacionL(float precioL, float km, float tarjetaDebitoL, float tarjetaCreditoL, float bitcoinL, float precioPorKmL)
+void mostrarInformacionL(float precioL, float km, float tarjetaDebitoL, float tarjetaCreditoL, float bitcoinL, float precioPorKmL)
 {
 	if(precioL > 0)
 	{
@@ -106,19 +102,15 @@ int mostrarInformacionL(float precioL, float km, float tarjetaDebitoL, float tar
 	{
 		printf("\nNo se ingresaron vuelos de Latam\n");
 	}
-
-	return 0;
 }
 
 // Imprime la diferencia entre dos precios previamente calculado.
 
-int mostrarDiferencia (float diferenciaPrecio)
+void mostrarDiferencia (float diferenciaPrecio)
 {
 	if(diferenciaPrecio == 0){}
 	else
 	{
 		printf("\n\nLa diferencia de precio es : %.2f",diferenciaPrecio);
 	}
-
-	return 0;
 }
