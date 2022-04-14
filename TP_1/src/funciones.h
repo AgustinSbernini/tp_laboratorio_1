@@ -2,7 +2,9 @@
 #ifndef FUNCIONES_H_
 #define FUNCIONES_H_
 
-float validarQueSeaMayorA (float variableAComparar, char textoAImprimir[50], float mayorA);
+//static int getFloat(float* pResultado);
+
+float validarNumeroPositivo (char textoAImprimir[64]);
 
 void calcularPrecios (float precio, float km, float* tarjetaDebito, float* tarjetaCredito, float* bitcoin, float* precioPorKm, int* bandera);
 

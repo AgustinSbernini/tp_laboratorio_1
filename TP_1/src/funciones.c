@@ -2,21 +2,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//static int getFloat(float* pResultado)
+//{
+//	char buffer[64];
+//	scanf("%s",buffer);
+//	*pResultado = atof(buffer);
+//	return 1;
+//}
+
 /*
   Imprime el texto en el que se le pide al usuario ingresar el valor de algo
-  Pide el valor mediante el scanf y valida de que el valor ingresado sea
-  Mayor al numero indicado
+  Pide el valor mediante el scanf en forma de array y lo convierte en un float
+  Para validar de que sea un numero y mediante el while se verifica que sea positivo
  */
-
-float validarQueSeaMayorA (float variableAComparar, char textoAImprimir[50], float mayorA)
+float validarNumeroPositivo (char textoAImprimir[64])
 {
+	float retorno;
+	char buffer[64];
+
 	do{
 		printf(textoAImprimir);
 		fflush(stdin);
-		scanf("%f",&variableAComparar);
-	}while(variableAComparar < mayorA);
+		scanf("%s",buffer);
+		retorno = atof (buffer);
+	}while(retorno <= 0);
 
-	return variableAComparar;
+	return retorno;
 }
 
 /*
@@ -25,7 +36,6 @@ float validarQueSeaMayorA (float variableAComparar, char textoAImprimir[50], flo
   De sus respectivos punteros.
   También levanta la bandera para que se pueda acceder al siguiente menú
 */
-
 void calcularPrecios (float precio, float km, float* tarjetaDebito, float* tarjetaCredito, float* bitcoin, float* precioPorKm, int* bandera)
 {
 	float descuentoDebito;
@@ -43,8 +53,9 @@ void calcularPrecios (float precio, float km, float* tarjetaDebito, float* tarje
 	*precioPorKm = (precio / km);
 }
 
-// Calcula la diferencia entre dos precios y retorna el resultado.
-
+/*
+  Calcula la diferencia entre dos precios y retorna el resultado.
+*/
 float calcularDif(float precioA, float precioL)
 {
 	float resultado;
@@ -68,15 +79,16 @@ float calcularDif(float precioA, float precioL)
 	return resultado;
 }
 
-// Imprime los precios previamente calculados o avisa que no se ingresaron vuelos
-
+/*
+  Imprime los precios previamente calculados o avisa que no se ingresaron vuelos
+*/
 void mostrarInformacionA(float precioA, float km, float tarjetaDebitoA, float tarjetaCreditoA, float bitcoinA, float precioPorKmA)
 {
 	printf("\nKMs Ingresados: %.2f km\n",km);
 
 	if(precioA > 0)
 	{
-		printf("\n\nPrecio Aerolineas: $%.2f",precioA);
+		printf("\nPrecio Aerolineas: $%.2f",precioA);
 		printf("\nPrecio con tarjeta de débito: %.2f",tarjetaDebitoA);
 		printf("\nPrecio con tarjeta de crédito: %.2f",tarjetaCreditoA);
 		printf("\nPrecio pagando con bitcoin: %f BTC",bitcoinA);
@@ -88,11 +100,14 @@ void mostrarInformacionA(float precioA, float km, float tarjetaDebitoA, float ta
 	}
 }
 
+/*
+  Imprime los precios previamente calculados o avisa que no se ingresaron vuelos
+*/
 void mostrarInformacionL(float precioL, float km, float tarjetaDebitoL, float tarjetaCreditoL, float bitcoinL, float precioPorKmL)
 {
 	if(precioL > 0)
 	{
-		printf("\n\nPrecio Latam: $%.2f",precioL);
+		printf("\nPrecio Latam: $%.2f",precioL);
 		printf("\nPrecio con tarjeta de débito: %.2f",tarjetaDebitoL);
 		printf("\nPrecio con tarjeta de crédito: %.2f",tarjetaCreditoL);
 		printf("\nPrecio pagando con bitcoin: %f BTC",bitcoinL);
@@ -104,13 +119,13 @@ void mostrarInformacionL(float precioL, float km, float tarjetaDebitoL, float ta
 	}
 }
 
-// Imprime la diferencia entre dos precios previamente calculado.
-
+/*
+  Imprime la diferencia entre dos precios previamente calculado.
+*/
 void mostrarDiferencia (float diferenciaPrecio)
 {
-	if(diferenciaPrecio == 0){}
-	else
+	if(diferenciaPrecio != 0)
 	{
-		printf("\n\nLa diferencia de precio es : %.2f",diferenciaPrecio);
+		printf("\nLa diferencia de precio es : %.2f\n",diferenciaPrecio);
 	}
 }

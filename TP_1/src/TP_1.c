@@ -39,7 +39,6 @@ int main(void) {
 
 	setbuf(stdout, NULL);
 
-	opcion = 0;
 	kilometros = 0;
 	precioVueloAerolineas = 0;
 	precioVueloLatam = 0;
@@ -66,7 +65,7 @@ int main(void) {
 		switch (opcion)
 		{
 			case 1:
-				kilometros = validarQueSeaMayorA (kilometros ,"Ingresar Kilómetros: ", 0);
+				kilometros = validarNumeroPositivo ("Ingresar Kilómetros: ");
 				break;
 
 			case 2:
@@ -78,14 +77,16 @@ int main(void) {
 					switch(latamOAerolineas)
 					{
 						case 'a':
-							precioVueloAerolineas = validarQueSeaMayorA (precioVueloAerolineas ,"Ingresar el precio del vuelo de Aerolíneas: $", 0);
+						case 'A':
+							precioVueloAerolineas = validarNumeroPositivo ("Ingresar el precio del vuelo de Aerolíneas: $");
 							break;
 
 						case 'l':
-							precioVueloLatam = validarQueSeaMayorA (precioVueloLatam ,"Ingresar el precio del vuelo de Latam: $", 0);
+						case 'L':
+							precioVueloLatam = validarNumeroPositivo ("Ingresar el precio del vuelo de Latam: $");
 							break;
 					}
-				}while(latamOAerolineas != 'a' && latamOAerolineas != 'l');
+				}while(latamOAerolineas != 'a' && latamOAerolineas != 'A' && latamOAerolineas != 'l' && latamOAerolineas != 'L');
 				break;
 
 			case 3:
@@ -124,11 +125,16 @@ int main(void) {
 				mostrarInformacionA (precioAerolineasForzado, kilometrosForzados, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
 				mostrarInformacionL (precioLatamForzado, kilometrosForzados, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
 				mostrarDiferencia (difPrecioAeroLatam);
+
+				banderaFuncion = 0;
 				break;
+			case 6:
+				printf("\nGracias por su visita, vuelva pronto!");
+				break;
+			default:
+				printf("\nError, ingrese una de las opciones descriptas.\n");
 		}
 	}while(opcion != 6);
-
-	printf("\nGracias por su visita, vuelva pronto!");
 
 	return 0;
 }
