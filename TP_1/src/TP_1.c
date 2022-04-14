@@ -2,10 +2,10 @@
 *	Programa: TP 1
 *
 *	Objetivo:
-	Una agencia de viaje necesita calcular costos para sus vuelos
-	de Latam y Aerolíneas Argentinas para ofrecerlos a sus clientes.
-	Se deberá ingresar por cada vuelo los km totales y el precio total del mismo.
-	El objetivo de la aplicación es mostrar las diferentes opciones de pagos a sus clientes.
+		Una agencia de viaje necesita calcular costos para sus vuelos
+		de Latam y Aerolíneas Argentinas para ofrecerlos a sus clientes.
+		Se deberá ingresar por cada vuelo los km totales y el precio total del mismo.
+		El objetivo de la aplicación es mostrar las diferentes opciones de pagos a sus clientes.
 *
 *	Version: 1.0 del 10 de Abril de 2022
 *	Autor: Agustin Sbernini
@@ -110,9 +110,9 @@ int main(void) {
 				}
 				else
 				{
-					mostrarInformacionA (precioVueloAerolineas, kilometros, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
+					mostrarInformacion ("Aerolineas", precioVueloAerolineas, kilometros, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
 
-					mostrarInformacionL (precioVueloLatam, kilometros, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
+					mostrarInformacion ("Latam", precioVueloLatam, kilometros, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
 
 					mostrarDiferencia (difPrecioAeroLatam);
 				}
@@ -122,8 +122,8 @@ int main(void) {
 				calcularPrecios (precioLatamForzado, kilometrosForzados,&tarjetaDebitoL, &tarjetaCreditoL, &bitcoinL, &precioPorKmL, &banderaFuncion);
 				difPrecioAeroLatam = calcularDif(precioLatamForzado, precioAerolineasForzado);
 
-				mostrarInformacionA (precioAerolineasForzado, kilometrosForzados, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
-				mostrarInformacionL (precioLatamForzado, kilometrosForzados, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
+				mostrarInformacion ("Aerolineas", precioAerolineasForzado, kilometrosForzados, tarjetaDebitoA, tarjetaCreditoA, bitcoinA, precioPorKmA);
+				mostrarInformacion ("Latam",precioLatamForzado, kilometrosForzados, tarjetaDebitoL, tarjetaCreditoL, bitcoinL, precioPorKmL);
 				mostrarDiferencia (difPrecioAeroLatam);
 
 				banderaFuncion = 0;
