@@ -24,14 +24,31 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include "ArrayPassenger.h"
+#include "Funciones_Extras.h"
+
+#define MAX_PASAJEROS 2000
 
 int main(void) {
 
 	int opcionMenuPrincipal;
 	int opcionMenuModificar;
 	int opcionMenuInformar;
+	int id;
+	char nombre[51];
+	char apellido[51];
+	float precio;
+	char codigoDeVuelo[10];
+	int tipoDePasajero;
+
+
+	Passenger listaDePasajeros[MAX_PASAJEROS];
 
 	setbuf(stdout, NULL);
+
+	initPassengers(listaDePasajeros, MAX_PASAJEROS);
 
 	do{
 		printf("Menu principal: \n"
@@ -39,7 +56,8 @@ int main(void) {
 				"2- MODIFICAR pasajero.\n"
 				"3- BAJA de pasajero.\n"
 				"4- INFORMAR.\n"
-				"5- Salir.\n"
+				"5- Carga Forzada.\n"
+				"6- Salir.\n"
 				"Elija una opción: ");
 		fflush(stdin);
 		scanf("%d",&opcionMenuPrincipal);
@@ -64,7 +82,13 @@ int main(void) {
 					switch(opcionMenuModificar)
 					{
 						case 1:
-							printf("2a");
+							generarID(&id);
+							pedirNombre(nombre);
+							pedirApellido(apellido);
+							pedirPrecio(&precio);
+							pedirTipoDePasajero(&tipoDePasajero);
+							pedirCodigoDeVuelo(codigoDeVuelo);
+							addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  nombre, apellido, precio, tipoDePasajero, codigoDeVuelo);
 							break;
 						case 2:
 							printf("2b");
@@ -119,13 +143,15 @@ int main(void) {
 				}while(opcionMenuInformar != 4);
 				break;
 			case 5:
+				break;
+			case 6:
 				printf("Cerrando sistema.\n");
 				break;
 			default:
-				printf("\nElija una opcion valida.\n");
+				printf("\nElija una opción valida.\n");
 		}
 
-	}while(opcionMenuPrincipal != 5);
+	}while(opcionMenuPrincipal != 6);
 
 
 	return 0;
