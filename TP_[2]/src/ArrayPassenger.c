@@ -231,7 +231,7 @@ int printPassenger(Passenger* list, StatusFlightAndTypePassenger* statusType ,in
 							{
 								if(list[i].typePassenger == statusType[k].typePassenger)
 								{
-									printf("%-6d %-17s %-18s %-12.2f %-22s %-23s %s\n", list[i].id, list[i].name, list[i].lastName,
+									printf("%-6d %-17s %-18s %-12.2f %-22s %-23s %s\n", list[i].id, list[i].lastName, list[i].name,
 												list[i].price, list[i].flycode, statusType[k].descriptionTP, statusType[j].descriptionSF);
 									break;
 								}
