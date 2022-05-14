@@ -16,9 +16,9 @@ typedef struct
 typedef struct
 {
 	int statusFlight;
-	char descriptionSF[10];
+	char descriptionSF[15];
 	int typePassenger;
-	char descriptionTP[10];
+	char descriptionTP[15];
 } StatusFlightAndTypePassenger;
 
 /// @brief To indicate that all position in the array are empty, this function put the flag (isEmpty)
@@ -26,7 +26,7 @@ typedef struct
 /// @param list Passenger* Pointer to array of passenger
 /// @param len int Array length
 /// @return int Return (-1) if Error [Invalid length or NULL pointer] - (0) if Ok
-
+///
 int initPassengers(Passenger* list, int len);
 
 /// @brief To indicate the values of the different types of passengers and flight statuses that exist

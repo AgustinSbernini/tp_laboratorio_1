@@ -29,7 +29,7 @@ int initPassengers(Passenger* list, int len)
 
 int initStatusFlightAndTypePassenger(StatusFlightAndTypePassenger* statusType, int len)
 {
-	int retorno;
+	int retorno = -1;
 	if (statusType != NULL)
 	{
 		if (len >= 0)
@@ -45,9 +45,11 @@ int initStatusFlightAndTypePassenger(StatusFlightAndTypePassenger* statusType, i
 			strcpy(statusType[1].descriptionTP, "Clase Económica");
 
 			statusType[2].statusFlight = 3;
-			strcpy(statusType[0].descriptionSF, "DEMORADO");
+			strcpy(statusType[2].descriptionSF, "DEMORADO");
 			statusType[2].typePassenger = 3;
 			strcpy(statusType[2].descriptionTP, "Clase Turista");
+
+			retorno = 0;
 		}
 	}
 	return retorno;
@@ -136,14 +138,8 @@ int removePassenger(Passenger* list, int len, int id)
 	{
 		if(len >= 0)
 		{
-			for(int i = 0; i < len; i++)
-			{
-				if(list[i].id == id)
-				{
-					list[i].isEmpty = LIBRE;
-					retorno = 0;
-				}
-			}
+			list[id].isEmpty = LIBRE;
+			retorno = 0;
 		}
 	}
 	return retorno;
@@ -162,7 +158,7 @@ int sortPassengersByLastName(Passenger* list, int len, int order)
 				{
 					for (int i = 0; i < len; i++)
 					{
-						for(int j = i + 1; i < len - 1; j++)
+						for(int j = i + 1; j < len - 1; j++)
 						{
 							if (strcmp(list[i].lastName, list[j].lastName) > 0)
 							{
@@ -172,7 +168,7 @@ int sortPassengersByLastName(Passenger* list, int len, int order)
 							}
 							if(strcmp(list[i].lastName, list[j].lastName) == 0)
 							{
-								if(list[i].typePassenger <= list[j].typePassenger)
+								if(list[i].typePassenger > list[j].typePassenger)
 								{
 									auxiliar = list[j];
 									list[j] = list[i];
@@ -186,7 +182,7 @@ int sortPassengersByLastName(Passenger* list, int len, int order)
 				{
 					for (int i = 0; i < len; i++)
 					{
-						for(int j = i + 1; i < len - 1; j++)
+						for(int j = i + 1; j < len - 1; j++)
 						{
 							if (strcmp(list[i].lastName, list[j].lastName) < 0)
 							{
@@ -196,7 +192,7 @@ int sortPassengersByLastName(Passenger* list, int len, int order)
 							}
 							if(strcmp(list[i].lastName, list[j].lastName) == 0)
 							{
-								if(list[i].typePassenger <= list[j].typePassenger)
+								if(list[i].typePassenger > list[j].typePassenger)
 								{
 									auxiliar = list[j];
 									list[j] = list[i];
@@ -222,7 +218,7 @@ int printPassenger(Passenger* list, StatusFlightAndTypePassenger* statusType ,in
 	{
 		if (length >= 0)
 		{
-			printf("ID     Nombre \t\t Apellido \t    Precio \t Codigo de Vuelo\tTipo de Pasajero \tEstado del vuelo\n");
+			printf("\nID     Nombre \t\t Apellido \t    Precio \t Codigo de Vuelo\tTipo de Pasajero \tEstado del vuelo\n");
 			for (i = 0; i < length; i++)
 			{
 				if(list[i].isEmpty == OCUPADO)
@@ -235,7 +231,7 @@ int printPassenger(Passenger* list, StatusFlightAndTypePassenger* statusType ,in
 							{
 								if(list[i].typePassenger == statusType[k].typePassenger)
 								{
-									printf("%-6d %-17s %-18s %-12.2f %-22s %-23s %s", list[i].id, list[i].name, list[i].lastName,
+									printf("%-6d %-17s %-18s %-12.2f %-22s %-23s %s\n", list[i].id, list[i].name, list[i].lastName,
 												list[i].price, list[i].flycode, statusType[k].descriptionTP, statusType[j].descriptionSF);
 									break;
 								}
@@ -243,9 +239,9 @@ int printPassenger(Passenger* list, StatusFlightAndTypePassenger* statusType ,in
 							break;
 						}
 					}
+					retorno = 0;
 				}
 			}
-			retorno = 0;
 		}
 	}
 
@@ -265,13 +261,22 @@ int sortPassengersByCode(Passenger* list, int len, int order)
 				{
 					for (int i = 0; i < len; i++)
 					{
-						for(int j = i + 1; i < len - 1; j++)
+						for(int j = i + 1; j < len - 1; j++)
 						{
-							if (list[i].flycode > list[j].flycode)
+							if (strcmp(list[i].flycode, list[j].flycode) > 0)
 							{
 								auxiliar = list[j];
 								list[j] = list[i];
 								list[i] = auxiliar;
+							}
+							if(strcmp(list[i].flycode, list[j].flycode) == 0)
+							{
+								if(list[i].statusFlight > list[j].statusFlight)
+								{
+									auxiliar = list[j];
+									list[j] = list[i];
+									list[i] = auxiliar;
+								}
 							}
 						}
 					}
@@ -280,13 +285,22 @@ int sortPassengersByCode(Passenger* list, int len, int order)
 				{
 					for (int i = 0; i < len; i++)
 					{
-						for(int j = i + 1; i < len - 1; j++)
+						for(int j = i + 1; j < len - 1; j++)
 						{
-							if (list[i].flycode < list[j].flycode)
+							if (strcmp(list[i].flycode, list[j].flycode) < 0)
 							{
 								auxiliar = list[j];
 								list[j] = list[i];
 								list[i] = auxiliar;
+							}
+							if(strcmp(list[i].flycode, list[j].flycode) == 0)
+							{
+								if(list[i].statusFlight > list[j].statusFlight)
+								{
+									auxiliar = list[j];
+									list[j] = list[i];
+									list[i] = auxiliar;
+								}
 							}
 						}
 					}

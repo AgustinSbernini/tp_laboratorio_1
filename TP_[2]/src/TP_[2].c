@@ -17,7 +17,7 @@
 *				promedio.
 *				3. Listado de los pasajeros por Código de vuelo y estados de vuelos ‘ACTIVO’
 *
-*	Version: 0.1 del 10 de Mayo de 2022
+*	Version: 1.0 del 14 de Mayo de 2022
 *	Autor: Agustin Sbernini
 *
 *****************************************************************************************************/
@@ -29,7 +29,7 @@
 #include "ArrayPassenger.h"
 #include "Funciones_Extras.h"
 
-#define MAX_PASAJEROS 3
+#define MAX_PASAJEROS 2000
 #define MAX_TIPOPASAJEROSESTADOVUELO 3
 
 int main(void) {
@@ -52,17 +52,23 @@ int main(void) {
 	int cantPasajeroPorEncimaDelPromedio;
 	int estadoDelVuelo;
 
-
 	Passenger listaDePasajeros[MAX_PASAJEROS];
 	StatusFlightAndTypePassenger estadoDelVueloYTipoPasajero[MAX_TIPOPASAJEROSESTADOVUELO];
 
 	setbuf(stdout, NULL);
 
-	initPassengers(listaDePasajeros, MAX_PASAJEROS);
-	initStatusFlightAndTypePassenger(estadoDelVueloYTipoPasajero, MAX_TIPOPASAJEROSESTADOVUELO);
+	if(initPassengers(listaDePasajeros, MAX_PASAJEROS) != 0)
+	{
+		printf("\nError al inicializar la estructura Passenger.\n");
+	}
+
+	if(initStatusFlightAndTypePassenger(estadoDelVueloYTipoPasajero, MAX_TIPOPASAJEROSESTADOVUELO) != 0)
+	{
+		printf("\nError al inicializar la estructura StatusFlightAndTypePassenger.\n");
+	}
 
 	do{
-		printf("Menu principal: \n"
+		printf("\nMenu principal: \n"
 				"1- ALTA de pasajero.\n"
 				"2- MODIFICAR pasajero.\n"
 				"3- BAJA de pasajero.\n"
@@ -79,13 +85,20 @@ int main(void) {
 				id++;
 				utn_getName(nombre, "Ingrese el nombre del pasajero nombre: ", "Error. Ingrese el nombre correctamente.\n");
 				utn_getName(apellido, "Ingrese el apellido del pasajero: ", "Error. Ingese el apellido correctamente.\n");
-				utn_getFloat(&precio, "Ingrese el precio del vuelo", "Error. Ingrese un dato valido.\n", 1, 999999999999999);
+				utn_getFloat(&precio, "Ingrese el precio del vuelo: ", "Error. Ingrese un dato valido.\n", 1, 999999999999999);
 				utn_getInt(&tipoDePasajero, "Ingrese 1 si es Primera Clase, 2 si es Clase Económica, 3 si es Clase Turista: ",
 						"Error. Ingrese una opción valida.\n", 1, 3);
 				pedirCodigoDeVuelo(codigoDeVuelo, "Ingrese el codigo de vuelo: ");
-				utn_getInt(&estadoDelVuelo, "Ingrese 1 si el vuelo esta Activo, 2 si esta Inactivo, 3 si esta Demorado: "
+				utn_getInt(&estadoDelVuelo, "Ingrese 1 si el vuelo esta Activo, 2 si esta Inactivo, 3 si esta Demorado: ",
 						"Error. Ingrese una opción valida.\n",1,3);
-				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  nombre, apellido, precio, tipoDePasajero, codigoDeVuelo, estadoDelVuelo);
+				if(addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  nombre, apellido, precio, tipoDePasajero, codigoDeVuelo, estadoDelVuelo) == 0)
+				{
+					printf("\nSe ha agregado un pasajero con exito.\n");
+				}
+				else
+				{
+					printf("\nHubo un error al intentar agregar al pasajero.\n");
+				}
 				break;
 			case 2:
 				do{
@@ -112,11 +125,18 @@ int main(void) {
 							indiceAModificar = findPassengerById(listaDePasajeros, MAX_PASAJEROS, opcionIdModificar);
 							if (indiceAModificar > -1)
 							{
-								modifyPassenger(listaDePasajeros, MAX_PASAJEROS, indiceAModificar, opcionMenuModificar);
+								if(modifyPassenger(listaDePasajeros, MAX_PASAJEROS, indiceAModificar, opcionMenuModificar) == 0)
+								{
+									printf("\nSe ha modificado al pasajero con exito.\n");
+								}
+								else
+								{
+									printf("\nHubo un error al intentar modificar al pasajero.\n");
+								}
 							}
 							else
 							{
-								printf("El ID ingresado no coincide con ningún pasajero de la lista.\n");
+								printf("\nEl ID ingresado no coincide con ningún pasajero de la lista.\n");
 							}
 							break;
 						case 6:
@@ -134,11 +154,18 @@ int main(void) {
 				indiceABajar = findPassengerById(listaDePasajeros, MAX_PASAJEROS, opcionIdBajar);
 				if (indiceABajar > -1)
 				{
-					removePassenger(listaDePasajeros, MAX_PASAJEROS, indiceABajar);
+					if(removePassenger(listaDePasajeros, MAX_PASAJEROS, indiceABajar) == 0)
+					{
+						printf("\nSe ha dado de baja con exito al pasajero.\n");
+					}
+					else
+					{
+						printf("\nHubo un error al intentar dar de baja al pasajero.\n");
+					}
 				}
 				else
 				{
-					printf("El ID ingresado no coincide con ningún pasajero de la lista.\n");
+					printf("\nEl ID ingresado no coincide con ningún pasajero de la lista.\n\n");
 				}
 				break;
 			case 4:
@@ -146,7 +173,7 @@ int main(void) {
 					printf("\nMenú para informar pasajeros:\n"
 							"1- Listado de pasajeros ordenados alfabéticamente por Apellido y Tipo de pasajero.\n"
 							"2- Total y promedio de los precios de los pasajes, y cuántos pasajeros superan el precio promedio.\n"
-							"3- Listado de los pasajeros por Código de vuelo y estados de vuelos ‘ACTIVO’\n"
+							"3- Listado de los pasajeros por Código de vuelo y estados de vuelos 'ACTIVO'\n"
 							"4- Volver al menú principal\n"
 							"Elija una opción: ");
 					fflush(stdin);
@@ -154,18 +181,42 @@ int main(void) {
 					switch(opcionMenuInformar)
 					{
 					case 1:
-						sortPassengersByLastName(listaDePasajeros, MAX_PASAJEROS, 1);
-						printPassenger(listaDePasajeros, estadoDelVueloYTipoPasajero ,MAX_PASAJEROS, MAX_TIPOPASAJEROSESTADOVUELO);
+						if(sortPassengersByLastName(listaDePasajeros, MAX_PASAJEROS, 1) == 0)
+						{
+							if(printPassenger(listaDePasajeros, estadoDelVueloYTipoPasajero ,MAX_PASAJEROS, MAX_TIPOPASAJEROSESTADOVUELO) != 0)
+							{
+								printf("\nLa lista de pasajeros esta vacia.\n");
+							}
+						}
+						else
+						{
+							printf("\nHubo un error al intentar ordenar los pasajero por apellido.\n");
+						}
 						break;
 					case 2:
-						averagePassenger(listaDePasajeros,MAX_PASAJEROS , &precioTotal, &precioPromedio);
-						cantPasajeroPorEncimaDelPromedio = aboveAveragePassenger(listaDePasajeros, MAX_PASAJEROS, precioPromedio);
-						printf("El precio total de todos los vuelos fue de $%.2f. En promedio cada pasajero pagó $%.2f."
-								"En total hay %d pasajeros que paga por encima del promedio.", precioTotal, precioPromedio, cantPasajeroPorEncimaDelPromedio);
+						if(averagePassenger(listaDePasajeros,MAX_PASAJEROS , &precioTotal, &precioPromedio) == 0)
+						{
+							cantPasajeroPorEncimaDelPromedio = aboveAveragePassenger(listaDePasajeros, MAX_PASAJEROS, precioPromedio);
+							printf("\nEl precio total de todos los vuelos fue de $%.2f.\nEn promedio cada pasajero pagó $%.2f."
+								"\nEn total hay %d pasajeros que paga por encima del promedio.\n", precioTotal, precioPromedio, cantPasajeroPorEncimaDelPromedio);
+						}
+						else
+						{
+							printf("\nHubo un error al intentar conseguir los calculos solicitados.\n");
+						}
 						break;
 					case 3:
-						sortPassengersByCode(listaDePasajeros, MAX_PASAJEROS, 1);
-						printPassenger(listaDePasajeros, estadoDelVueloYTipoPasajero ,MAX_PASAJEROS, MAX_TIPOPASAJEROSESTADOVUELO);
+						if(sortPassengersByCode(listaDePasajeros, MAX_PASAJEROS, 1) == 0)
+						{
+							if(printPassenger(listaDePasajeros, estadoDelVueloYTipoPasajero ,MAX_PASAJEROS, MAX_TIPOPASAJEROSESTADOVUELO) != 0)
+							{
+								printf("\nLa lista de pasajeros esta vacia.\n");
+							}
+						}
+						else
+						{
+							printf("\nHubo un error al intentar ordenar los pasajeros por codigo de vuelo.\n");
+						}
 						break;
 					case 4:
 						printf("\nVolviendo al menú principal.\n");
@@ -176,16 +227,36 @@ int main(void) {
 				}while(opcionMenuInformar != 4);
 				break;
 			case 5:
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id, "Agustin", "Sbernini", 15601.23, 3, "ARGBR-23", 1);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "Juan Pedro", "Lopez", 24031.35, 2, "CHLPR-42", 3);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "Juliana", "Rodriguez", 31150.50, 1, "ARGUS-52", 2);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "Joaquin", "Suarez", 17164.31, 3, "CHLPR-42", 1);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "Joaquin", "Suarez", 30518, 1, "USPR-61", 1);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "Catriel", "Darin", 32051.31, 1, "USPR-61", 3);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "Estefania", "Albanessi", 19081, 3, "MXCL-16", 2);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "Valentino", "Pedano", 25031.24, 2, "USPR-61", 2);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "Guillermina", "Alonso", 25151.13, 2, "ARGBR-23", 3);
+				id++;
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  "San Sebastian", "Lopez Aguero", 33654.13, 1, "ARGUS-52", 1);
+				printf("\nSe han cargado con exito todos los usuarios de la carga forzada.\n");
 				break;
 			case 6:
-				printf("Cerrando sistema.\n");
+				printf("\nCerrando sistema.\n");
 				break;
 			default:
 				printf("\nElija una opción valida.\n");
 		}
 
 	}while(opcionMenuPrincipal != 6);
-
 
 	return 0;
 }

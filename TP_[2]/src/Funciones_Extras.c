@@ -15,6 +15,7 @@ void pedirCodigoDeVuelo(char codigoDeVuelo[10], char* mensaje)
 
 int myGets(char *cadena, int longitud)
 {
+	int retorno = -1;
 	if (cadena != NULL && longitud > 0 && fgets(cadena, longitud, stdin) == cadena)
 	{
 		fflush(stdin);
@@ -22,9 +23,9 @@ int myGets(char *cadena, int longitud)
 		{
 			cadena[strlen(cadena) - 1] = '\0';
 		}
-		return 0;
+		retorno = 0;
 	}
-	return -1;
+	return retorno;
 }
 
 int getInt(int *pResultado)
