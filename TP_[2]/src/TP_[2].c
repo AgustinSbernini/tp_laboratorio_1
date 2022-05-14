@@ -29,26 +29,37 @@
 #include "ArrayPassenger.h"
 #include "Funciones_Extras.h"
 
-#define MAX_PASAJEROS 2000
+#define MAX_PASAJEROS 3
+#define MAX_TIPOPASAJEROSESTADOVUELO 3
 
 int main(void) {
 
 	int opcionMenuPrincipal;
 	int opcionMenuModificar;
 	int opcionMenuInformar;
-	int id;
+	int opcionIdModificar;
+	int indiceAModificar;
+	int opcionIdBajar;
+	int indiceABajar;
+	int id = 0;
 	char nombre[51];
 	char apellido[51];
 	float precio;
 	char codigoDeVuelo[10];
 	int tipoDePasajero;
+	float precioTotal;
+	float precioPromedio;
+	int cantPasajeroPorEncimaDelPromedio;
+	int estadoDelVuelo;
 
 
 	Passenger listaDePasajeros[MAX_PASAJEROS];
+	StatusFlightAndTypePassenger estadoDelVueloYTipoPasajero[MAX_TIPOPASAJEROSESTADOVUELO];
 
 	setbuf(stdout, NULL);
 
 	initPassengers(listaDePasajeros, MAX_PASAJEROS);
+	initStatusFlightAndTypePassenger(estadoDelVueloYTipoPasajero, MAX_TIPOPASAJEROSESTADOVUELO);
 
 	do{
 		printf("Menu principal: \n"
@@ -65,7 +76,16 @@ int main(void) {
 		switch(opcionMenuPrincipal)
 		{
 			case 1:
-				printf("1");
+				id++;
+				utn_getName(nombre, "Ingrese el nombre del pasajero nombre: ", "Error. Ingrese el nombre correctamente.\n");
+				utn_getName(apellido, "Ingrese el apellido del pasajero: ", "Error. Ingese el apellido correctamente.\n");
+				utn_getFloat(&precio, "Ingrese el precio del vuelo", "Error. Ingrese un dato valido.\n", 1, 999999999999999);
+				utn_getInt(&tipoDePasajero, "Ingrese 1 si es Primera Clase, 2 si es Clase Económica, 3 si es Clase Turista: ",
+						"Error. Ingrese una opción valida.\n", 1, 3);
+				pedirCodigoDeVuelo(codigoDeVuelo, "Ingrese el codigo de vuelo: ");
+				utn_getInt(&estadoDelVuelo, "Ingrese 1 si el vuelo esta Activo, 2 si esta Inactivo, 3 si esta Demorado: "
+						"Error. Ingrese una opción valida.\n",1,3);
+				addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  nombre, apellido, precio, tipoDePasajero, codigoDeVuelo, estadoDelVuelo);
 				break;
 			case 2:
 				do{
@@ -82,25 +102,22 @@ int main(void) {
 					switch(opcionMenuModificar)
 					{
 						case 1:
-							generarID(&id);
-							pedirNombre(nombre);
-							pedirApellido(apellido);
-							pedirPrecio(&precio);
-							pedirTipoDePasajero(&tipoDePasajero);
-							pedirCodigoDeVuelo(codigoDeVuelo);
-							addPassenger(listaDePasajeros,  MAX_PASAJEROS,  id,  nombre, apellido, precio, tipoDePasajero, codigoDeVuelo);
-							break;
 						case 2:
-							printf("2b");
-							break;
 						case 3:
-							printf("2c");
-							break;
 						case 4:
-							printf("2d");
-							break;
 						case 5:
-							printf("2e");
+							printf("Indique el ID del pasajero que desea modificar: ");
+							fflush(stdin);
+							scanf("%d", &opcionIdModificar);
+							indiceAModificar = findPassengerById(listaDePasajeros, MAX_PASAJEROS, opcionIdModificar);
+							if (indiceAModificar > -1)
+							{
+								modifyPassenger(listaDePasajeros, MAX_PASAJEROS, indiceAModificar, opcionMenuModificar);
+							}
+							else
+							{
+								printf("El ID ingresado no coincide con ningún pasajero de la lista.\n");
+							}
 							break;
 						case 6:
 							printf("\nVolviendo al menú principal.\n");
@@ -111,7 +128,18 @@ int main(void) {
 				}while(opcionMenuModificar != 6);
 				break;
 			case 3:
-				printf("3");
+				printf("Ingrese el ID del pasajero que desea dar de baja: ");
+				fflush(stdin);
+				scanf("%d", &opcionIdBajar);
+				indiceABajar = findPassengerById(listaDePasajeros, MAX_PASAJEROS, opcionIdBajar);
+				if (indiceABajar > -1)
+				{
+					removePassenger(listaDePasajeros, MAX_PASAJEROS, indiceABajar);
+				}
+				else
+				{
+					printf("El ID ingresado no coincide con ningún pasajero de la lista.\n");
+				}
 				break;
 			case 4:
 				do{
@@ -126,13 +154,18 @@ int main(void) {
 					switch(opcionMenuInformar)
 					{
 					case 1:
-						printf("4a");
+						sortPassengersByLastName(listaDePasajeros, MAX_PASAJEROS, 1);
+						printPassenger(listaDePasajeros, estadoDelVueloYTipoPasajero ,MAX_PASAJEROS, MAX_TIPOPASAJEROSESTADOVUELO);
 						break;
 					case 2:
-						printf("4b");
+						averagePassenger(listaDePasajeros,MAX_PASAJEROS , &precioTotal, &precioPromedio);
+						cantPasajeroPorEncimaDelPromedio = aboveAveragePassenger(listaDePasajeros, MAX_PASAJEROS, precioPromedio);
+						printf("El precio total de todos los vuelos fue de $%.2f. En promedio cada pasajero pagó $%.2f."
+								"En total hay %d pasajeros que paga por encima del promedio.", precioTotal, precioPromedio, cantPasajeroPorEncimaDelPromedio);
 						break;
 					case 3:
-						printf("4c");
+						sortPassengersByCode(listaDePasajeros, MAX_PASAJEROS, 1);
+						printPassenger(listaDePasajeros, estadoDelVueloYTipoPasajero ,MAX_PASAJEROS, MAX_TIPOPASAJEROSESTADOVUELO);
 						break;
 					case 4:
 						printf("\nVolviendo al menú principal.\n");

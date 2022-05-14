@@ -9,8 +9,17 @@ typedef struct
 	float price;
 	char flycode[10];
 	int typePassenger;
+	int statusFlight;
 	int isEmpty;
 } Passenger;
+
+typedef struct
+{
+	int statusFlight;
+	char descriptionSF[10];
+	int typePassenger;
+	char descriptionTP[10];
+} StatusFlightAndTypePassenger;
 
 /// @brief To indicate that all position in the array are empty, this function put the flag (isEmpty)
 /// in TRUE in all position of the array
@@ -19,6 +28,14 @@ typedef struct
 /// @return int Return (-1) if Error [Invalid length or NULL pointer] - (0) if Ok
 
 int initPassengers(Passenger* list, int len);
+
+/// @brief To indicate the values of the different types of passengers and flight statuses that exist
+///
+/// @param statusType
+/// @param len
+/// @return int Return (-1) if Error [Invalid length or NULL pointer] - (0) if Ok
+
+int initStatusFlightAndTypePassenger(StatusFlightAndTypePassenger* statusType, int len);
 
 /// @brief Find a Empty slot
 ///
@@ -38,11 +55,12 @@ int findFreeSlot(Passenger* list, int len);
 /// @param price float
 /// @param typePassenger int
 /// @param flycode char
+/// @param statusFlight int
 /// @returnint Return (-1) if Error [Invalid length or NULL pointer or without free space] - (0) if Ok
 
-int addPassenger(Passenger* list, int len, int id, char name[],char lastName[],float price,int typePassenger, char flycode[]);
+int addPassenger(Passenger* list, int len, int id, char name[],char lastName[],float price,int typePassenger, char flycode[], int statusFlight);
 
-/// @brief find a Passenger by Id en returns the index position in array.
+/// @brief find a Passenger by Id and returns the index position in array.
 ///
 /// @param list Passenger*
 /// @param len int
@@ -75,7 +93,7 @@ int sortPassengersByLastName(Passenger* list, int len, int order);
 /// @param length int
 /// @return int
 
-int printPassenger(Passenger* list, int length);
+int printPassenger(Passenger* list, StatusFlightAndTypePassenger* status, int length, int lenStatusType);
 
 /// @brief Sort the elements in the array of passengers, the argument order indicate UP or DOWN order
 ///
@@ -85,5 +103,34 @@ int printPassenger(Passenger* list, int length);
 /// @return int Return (-1) if Error [Invalid length or NULL pointer] - (0) if Ok
 
 int sortPassengersByCode(Passenger* list, int len, int order);
+
+/// @brief Modify the field indicated by option in the slot of array of passengers indicated by index
+///
+/// @param list Passenger*
+/// @param len int
+/// @param index index where was charged the passenger and will be modify
+/// @param option int [1] name [2] lastName [3] price [4] TypePassenger [5] flyCode
+/// @return int Return (-1) if Error [Invalid length or NULL pointer] - (0) if Ok
+
+int modifyPassenger(Passenger* list, int len, int index, int option);
+
+/// @brief Calculate the total value of all flights and calculate the average of them
+///
+/// @param list Passenger*
+/// @param len int
+/// @param total Price returns through the pointer the total price of the flights
+/// @param average Returns through the pointer the average price of the flights
+/// @return int Return (-1) if Error [Invalid length or NULL pointer or the list are empty] - (0) if Ok
+
+int averagePassenger(Passenger* list, int len, float* totalPrice, float* average);
+
+/// @brief count how many passengers pay above the average price
+///
+/// @param list Passenger*
+/// @param len int
+/// @param average average price of flights
+/// @return int (-1) if error [Invalid length or NULL pointer or the list are empty] or the number of passengers above the average
+
+int aboveAveragePassenger(Passenger* list, int len, float average);
 
 #endif
