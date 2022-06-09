@@ -36,7 +36,9 @@ int main()
     int guardado = 1;
     int cargarDatos = 0;
     int contadorPasajerosAgregados = 0;
+    int contadorPasajerosBorrados = 0;
     int errorEdit;
+    int errorRemover;
 //    char* path = "data.csv";
 
     LinkedList* listaPasajeros = ll_newLinkedList();
@@ -99,7 +101,7 @@ int main()
 				}
             	break;
             case 3:
-            	if(controller_addPassenger(listaPasajeros) == 0)
+            	if(controller_addPassenger(listaPasajeros, contadorPasajerosBorrados) == 0)
             	{
             		printf("\nSe ha agregado correctamente el pasajero.\n");
 					guardado = 0;
@@ -125,16 +127,35 @@ int main()
             		case -3:
             			printf("Error. Hubo un inconveniente al intentar obtener los datos del pasajero.\n");
             			break;
+            		default:
+            			guardado = 0;
             		}
             	}
             	else
             	{
             		printf("\nTodavía no ingresó ningún pasajero.\n");
             	}
-            	guardado = 0;
 				break;
             case 5:
-            	guardado = 0;
+            	errorRemover = controller_removePassenger(listaPasajeros);
+            	switch(errorRemover)
+            	{
+            	case 0:
+					contadorPasajerosBorrados++;
+					printf("\nSe ha dado de baja correctamente al pasajero de la lista.\n");
+					guardado = 0;
+					break;
+            	case -1:
+            		printf("\nError. La lista se encuentra vacia.\n");
+					break;
+            	case -2:
+            		printf("\nError. El id ingresado no coincide con ningun pasajero de la lista.\n");
+            		break;
+            	case -3:
+            		printf("\nSe ha cancelado la bajada del pasajero de la lista.\n");
+            		break;
+            	}
+            	printf("\nVolviendo al menu principal.\n");
 				break;
             case 6:
             	controller_ListPassenger(listaPasajeros);

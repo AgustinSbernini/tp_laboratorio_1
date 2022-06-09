@@ -58,7 +58,7 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListPassenger)
  * \return int
  *
  */
-int controller_addPassenger(LinkedList* pArrayListPassenger)
+int controller_addPassenger(LinkedList* pArrayListPassenger, int contadorBorrados)
 {
 	int retorno = -1;
 
@@ -79,7 +79,7 @@ int controller_addPassenger(LinkedList* pArrayListPassenger)
 		int id;
 
 		len = ll_len(pArrayListPassenger);
-		id = len + 1;
+		id = len + 1 + contadorBorrados;
 		itoa(id,idStr,TAM_DECIMAL);
 
 		r = utn_getName(nombre, "Ingrese el nombre del pasajero: ", "Error. Ingrese el nombre correctamente.\n");
@@ -353,6 +353,62 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 int controller_removePassenger(LinkedList* pArrayListPassenger)
 {
 	int retorno = -1;
+
+	if(pArrayListPassenger != NULL)
+	{
+		int len;
+		int id;
+		int index;
+		char confirmacion[TAM_RESTODATOS];
+		int confirmacionSi;
+		int confirmacionNo;
+		Passenger* pasajeroAux;
+		len = ll_len(pArrayListPassenger);
+		if(len > 0)
+		{
+			if(utn_getInt(&id,"Ingrese el id del pasajero que desea dar de baja: ","Error. El id ingresado no es valido.\n", 1, len) == 0)
+			{
+				index = Passenger_find(pArrayListPassenger, id);
+				if(index > -1)
+				{
+					pasajeroAux = ll_get(pArrayListPassenger, index);
+					if(pasajeroAux != NULL)
+					{
+						printf("El pasajero a dar de baja es:\n");
+						Passenger_printOne(pasajeroAux);
+						do{
+							utn_getName(confirmacion, "Esta seguro que es quien quiere eliminar? (responda 'si' o 'no'): ", "Error. Ingrese una respuesta valida.\n");
+							confirmacionSi = strcmp(confirmacion, "Si");
+							confirmacionNo = strcmp(confirmacion, "No");
+							if(confirmacionSi == 0)
+							{
+								if(ll_remove(pArrayListPassenger, index) == 0)
+								{
+									retorno = 0;
+								}
+							}
+							else
+							{
+								if(confirmacionNo == 0)
+								{
+									retorno = -3;
+								}
+								else
+								{
+									printf("\nError. Ingrese una respuesta valida.\n");
+								}
+							}
+						}while(confirmacionSi != 0 && confirmacionNo != 0);
+					}
+				}
+				else
+				{
+					retorno = -2;
+				}
+			}
+		}
+	}
+
     return retorno;
 }
 
