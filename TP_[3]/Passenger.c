@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "Passenger.h"
 #include "Funciones_Extras.h"
+#include "LinkedList.h"
 
 Passenger* Passenger_new()
 {
@@ -16,16 +17,18 @@ Passenger* Passenger_new()
 
 	return unPasajero;
 }
+
 Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* tipoPasajeroStr, char* apellidoStr, char* precio, char* codigo, char* estado)
 {
 	Passenger* unPasajero;
 	unPasajero = Passenger_new();
+	int error = 0;
 
 	if(unPasajero != NULL)
 	{
 		if(Passenger_setId(unPasajero, atoi(idStr)) == 0)
 		{
-			if(Passenger_setNombre(unPasajero, nombreStr))
+			if(Passenger_setNombre(unPasajero, nombreStr) == 0)
 			{
 				if(Passenger_setApellido(unPasajero, apellidoStr) == 0)
 				{
@@ -37,7 +40,7 @@ Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* tipoPasajer
 							{
 								if(Passenger_setEstadoVuelo(unPasajero, estado) == 0)
 								{
-									return unPasajero;
+									error = 1;
 								}
 							}
 						}
@@ -47,7 +50,34 @@ Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* tipoPasajer
 		}
 	}
 
-	return NULL;
+	if(error != 1)
+	{
+		unPasajero = NULL;
+	}
+
+	return unPasajero;
+}
+
+int Passenger_find(LinkedList* this, int id)
+{
+	int retorno = -1;
+	int len;
+	Passenger* pasajeroAux;
+	if(this != NULL && id > 0)
+	{
+		len = ll_len(this);
+		for(int i = 0; i < len; i++)
+		{
+			pasajeroAux = (Passenger*) ll_get(this, i);
+			if(pasajeroAux->id == id)
+			{
+				retorno = i;
+				break;
+			}
+		}
+	}
+
+	return retorno;
 }
 
 void Passenger_delete(Passenger* this)
@@ -58,25 +88,25 @@ void Passenger_delete(Passenger* this)
 	}
 }
 
-int Passenger_setId(Passenger* this,int id)
+int Passenger_setId(Passenger* this,int idPasajero)
 {
 	int retorno = -1;
 
-	if(this != NULL && id > 0)
+	if(this != NULL && idPasajero > 0)
 	{
-		this->id = id;
+		this->id = idPasajero;
 		retorno = 0;
 	}
 
 	return retorno;
 }
-int Passenger_getId(Passenger* this,int* id)
+int Passenger_getId(Passenger* this,int* idPasajero)
 {
 	int retorno = -1;
 
-	if(this != NULL && id != NULL)
+	if(this != NULL && idPasajero != NULL)
 	{
-		*id = this->id;
+		*idPasajero = this->id;
 		retorno = 0;
 	}
 
@@ -237,7 +267,7 @@ void Passenger_printOne(Passenger* this)
 {
 	if(this != NULL)
 	{
-		int id;
+		int idPasajero;
 		char nombre[TAM_NOMBRES];
 		char apellido[TAM_NOMBRES];
 		float precio;
@@ -246,7 +276,7 @@ void Passenger_printOne(Passenger* this)
 		char codigoVuelo[TAM_RESTODATOS];
 		char estadoVuelo[TAM_RESTODATOS];
 
-		if(Passenger_getId(this, &id) == 0)
+		if(Passenger_getId(this, &idPasajero) == 0)
 		{
 			if(Passenger_getNombre(this, nombre) == 0)
 			{
@@ -254,7 +284,7 @@ void Passenger_printOne(Passenger* this)
 				{
 					if(Passenger_getPrecio(this, &precio) == 0)
 					{
-						if(Passenger_getCodigoVuelo(this, codigoVuelo))
+						if(Passenger_getCodigoVuelo(this, codigoVuelo) == 0)
 						{
 							if(Passenger_getEstadoVuelo(this, estadoVuelo) == 0)
 							{
@@ -275,8 +305,7 @@ void Passenger_printOne(Passenger* this)
 											strcpy(tipoPasajeroConvertido, "EconomyClass");
 										}
 									}
-
-									printf("%-6d %-17s %-18s %-12.2f %-10s %-15s %s\n", id, nombre, apellido, precio, codigoVuelo, estadoVuelo, tipoPasajeroConvertido);
+									printf("%-6d %-17s %-18s %-12.2f %-10s %-15s %s\n", idPasajero, nombre, apellido, precio, codigoVuelo, estadoVuelo, tipoPasajeroConvertido);
 								}
 							}
 						}

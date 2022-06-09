@@ -1,8 +1,10 @@
 #ifndef PASSENGER_H_
 #define PASSENGER_H_
+#include "LinkedList.h"
 
 #define TAM_NOMBRES 50
 #define TAM_RESTODATOS 20
+#define TAM_DECIMAL 10
 
 typedef struct
 {
@@ -27,8 +29,8 @@ Passenger* Passenger_new();
 Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* tipoPasajeroStr, char* apellidoStr, char* precio, char* codigo, char* estado);
 void Passenger_delete();
 
-int Passenger_setId(Passenger* this,int id);
-int Passenger_getId(Passenger* this,int* id);
+int Passenger_setId(Passenger* this,int idPasajero);
+int Passenger_getId(Passenger* this,int* idPasajero);
 
 int Passenger_setNombre(Passenger* this,char* nombre);
 int Passenger_getNombre(Passenger* this,char* nombre);
@@ -49,5 +51,7 @@ int Passenger_setEstadoVuelo (Passenger* this,char* estadoVuelo);
 int Passenger_getEstadoVuelo (Passenger* this,char* estadoVuelo);
 
 void Passenger_printOne(Passenger* this);
+
+int Passenger_find(LinkedList* this, int id);
 
 #endif /* PASSENGER_H_ */

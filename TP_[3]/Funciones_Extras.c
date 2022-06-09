@@ -82,7 +82,7 @@ int utn_getInt(int *pResultado, char *mensaje, char *mensajeError, int minimo, i
 	return retorno;
 }
 
-int getFloat(float *pResultado)
+int getFloat(char *pResultado)
 {
 	int retorno = -1;
 	char buffer[64];
@@ -91,29 +91,26 @@ int getFloat(float *pResultado)
 	{
 		if (myGets(buffer, sizeof(buffer)) == 0 && esNumerica(buffer))
 		{
-			*pResultado = atof(buffer);
+			strcpy(pResultado,buffer);
 			retorno = 0;
 		}
 	}
 	return retorno;
 }
 
-int utn_getFloat(float *pResultado, char *mensaje, char *mensajeError, float minimo, float maximo)
+int utn_getFloat(char *pResultado, char *mensaje, char *mensajeError)
 {
-	float bufferFloat;
+	char bufferFloat[64];
 	int retorno = -1;
 
 	while (retorno != 0)
 	{
 		printf("%s", mensaje);
-		if (getFloat(&bufferFloat) == 0)
+		if (getFloat(bufferFloat) == 0)
 		{
-			if (bufferFloat >= minimo && bufferFloat <= maximo)
-			{
-				*pResultado = bufferFloat;
-				retorno = 0;
-				break;
-			}
+			strcpy(pResultado,bufferFloat);
+			retorno = 0;
+			break;
 		}
 		printf("%s", mensajeError);
 	}

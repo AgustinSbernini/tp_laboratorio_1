@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "LinkedList.h"
 #include "Passenger.h"
 
@@ -18,7 +19,7 @@ int parser_PassengerFromText(FILE* pFile , LinkedList* pArrayListPassenger)
 	{
 		if(pArrayListPassenger != NULL)
 		{
-			char id[TAM_RESTODATOS];
+			char idStr[TAM_RESTODATOS];
 			char nombre[TAM_NOMBRES];
 			char apellido[TAM_NOMBRES];
 			char precio[TAM_RESTODATOS];
@@ -27,13 +28,29 @@ int parser_PassengerFromText(FILE* pFile , LinkedList* pArrayListPassenger)
 			char codigo[TAM_RESTODATOS];
 			Passenger* unPasajero;
 
-			fscanf(pFile,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n", id, nombre, apellido, precio, codigo, tipo, estado);
-
+			fscanf(pFile,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n", idStr, nombre, apellido, precio, codigo, tipo, estado);
 			while(1)
 			{
-				if(fscanf(pFile,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n", id, nombre, apellido, precio, codigo, tipo, estado) == 7)
+				if(fscanf(pFile,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n", idStr, nombre, apellido, precio, codigo, tipo, estado) == 7)
 				{
-					unPasajero = Passenger_newParametros(id, nombre, tipo, apellido, precio, codigo, estado);
+					if(strcmp(tipo,"FirstClass") == 0)
+					{
+						strcpy(tipo, "1");
+					}
+					else
+					{
+						if(strcmp(tipo,"ExecutiveClass") == 0)
+						{
+							strcpy(tipo, "2");
+						}
+						else
+						{
+							strcpy(tipo, "3");
+						}
+					}
+
+					unPasajero = Passenger_newParametros(idStr, nombre, tipo, apellido, precio, codigo, estado);
+
 					if(unPasajero != NULL)
 					{
 						ll_add(pArrayListPassenger, unPasajero);

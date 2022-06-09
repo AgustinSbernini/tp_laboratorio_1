@@ -6,7 +6,7 @@
 /// @param codigoDeVuelo puntero que devuelve el codigo de vuelo ingresado
 /// @param mensaje mensaje que donde se imprime la peticion
 
-void pedirCodigoDeVuelo(char codigoDeVuelo[10], char* mensaje);
+void pedirCodigoVuelo(char codigoDeVuelo[10], char* mensaje);
 
 /// @brief pide al usuario un dato a traves de string y cambia el ultimo bit de '\n' a '\0'
 ///
@@ -47,7 +47,7 @@ int utn_getInt(int *pResultado, char *mensaje, char *mensajeError, int minimo, i
 /// @param pResultado pResultado puntero por donde se devuelve el flotante obtenido
 /// @return devuelve -1 si hubo un error en esta funcion o en alguna de las anteriores - 0 si esta ok
 
-int getFloat(float *pResultado);
+int getFloat(char *pResultado);
 
 /// @brief pide al usuario que ingrese un flotante usando getFloat, verifica que este dentro de los parametros establecidos
 /// 	   y duevle el flotante generado
@@ -59,7 +59,7 @@ int getFloat(float *pResultado);
 /// @param maximo parametro que delimita el numero maximo a ingresar
 /// @return devuelve -1 si hubo un error - 0 si esta ok
 
-int utn_getFloat(float *pResultado, char *mensaje, char *mensajeError, float minimo, float maximo);
+int utn_getFloat(char *pResultado, char *mensaje, char *mensajeError);
 
 /// @brief pide al usuario que ingrese un nombre, verifica que no se hayan ingresados caracteres
 /// 	   que no sean letras y devuelve el nombre generado

@@ -17,7 +17,7 @@
 *			 9. Guardar los datos de los pasajeros en el archivo data.csv (modo binario).
 *			10. Salir
 *
-*	Version: 0.1 del 1 de Junio de 2022
+*	Version: 0.7 del 9 de Junio de 2022
 *	Autor: Agustin Sbernini
 *
 ********************************************************************************************************/
@@ -34,12 +34,12 @@ int main()
 {
     int option;
     int guardado = 1;
-//    int cantElementosPasajeros;
     int cargarDatos = 0;
+    int contadorPasajerosAgregados = 0;
+    int errorEdit;
+//    char* path = "data.csv";
 
     LinkedList* listaPasajeros = ll_newLinkedList();
-//    FILE* pFile;
-
 
     setbuf(stdout, NULL);
 
@@ -61,39 +61,85 @@ int main()
             case 1:
             	if(cargarDatos == 0)
             	{
-					printf("\nEntro 1\n");
 					if(controller_loadFromText("data.csv",listaPasajeros) == 0)
 					{
 						cargarDatos = 1;
 						printf("\nLos datos han sido cargados exitosamente.\n");
+						if(contadorPasajerosAgregados != 0)
+						{
+							if(controller_corregirId(listaPasajeros, contadorPasajerosAgregados) == 0)
+							{
+								printf("\nSe corrigieron los id de los pasajeros agregados anteriormente correctamente.\n");
+							}
+							else
+							{
+								printf("\nNo se pudieron corregir los id de los pasajeros agregados anteriormente.\n");
+							}
+						}
 					}
+					else
+					{
+						printf("\nLos datos no se han podido cargar.\n");
+					}
+            	}
+            	else
+            	{
+            		printf("\nYa cargó los datos.\n");
             	}
                 break;
             case 2:
             	if(cargarDatos == 0)
             	{
-            		printf("Entro 2");
+            		printf("\nEntro 2\n");
 					cargarDatos = 1;
             	}
+            	else
+				{
+					printf("\nYa cargó los datos.\n");
+				}
             	break;
             case 3:
-            	printf("Entro 3");
-            	guardado = 0;
+            	if(controller_addPassenger(listaPasajeros) == 0)
+            	{
+            		printf("\nSe ha agregado correctamente el pasajero.\n");
+					guardado = 0;
+					contadorPasajerosAgregados++;
+            	}
+            	else
+            	{
+            		printf("\nNo se ha podido agregar al pasajero.\n");
+            	}
 				break;
             case 4:
-            	printf("Entro 4");
+            	if(ll_len(listaPasajeros) != 0)
+            	{
+            		errorEdit = controller_editPassenger(listaPasajeros);
+            		switch(errorEdit)
+            		{
+            		case -1:
+            			printf("\nError. Se encontró un inconveniente en la lista.\n");
+            			break;
+            		case -2:
+            			printf("Error. El id ingresado no coincide con ninguno en la lista\n");
+            			break;
+            		case -3:
+            			printf("Error. Hubo un inconveniente al intentar obtener los datos del pasajero.\n");
+            			break;
+            		}
+            	}
+            	else
+            	{
+            		printf("\nTodavía no ingresó ningún pasajero.\n");
+            	}
             	guardado = 0;
 				break;
             case 5:
-            	printf("Entro 5");
             	guardado = 0;
 				break;
             case 6:
-            	printf("Entro 6.\n");
             	controller_ListPassenger(listaPasajeros);
 				break;
             case 7:
-            	printf("Entro 7");
             	guardado = 0;
 				break;
             case 8:
