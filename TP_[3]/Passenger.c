@@ -10,10 +10,7 @@ Passenger* Passenger_new()
 {
 	Passenger* unPasajero;
 
-	if(unPasajero != NULL)
-	{
-		unPasajero = (Passenger*) malloc (sizeof(Passenger));
-	}
+	unPasajero = (Passenger*) malloc (sizeof(Passenger));
 
 	return unPasajero;
 }
@@ -305,7 +302,7 @@ void Passenger_printOne(Passenger* this)
 											strcpy(tipoPasajeroConvertido, "EconomyClass");
 										}
 									}
-									printf("%-6d %-17s %-18s %-12.2f %-10s %-15s %s\n", idPasajero, nombre, apellido, precio, codigoVuelo, estadoVuelo, tipoPasajeroConvertido);
+									printf("%-6d %-17s %-18s %-12.2f %-10s %-15s %s\n", idPasajero, nombre, apellido, precio, codigoVuelo, tipoPasajeroConvertido, estadoVuelo);
 								}
 							}
 						}
@@ -314,4 +311,125 @@ void Passenger_printOne(Passenger* this)
 			}
 		}
 	}
+}
+
+int Passenger_sortById(void* pasajeroUno, void* pasajeroDos)
+{
+	int retorno = -1;
+	int idPasajeroUno;
+	int idPasajeroDos;
+
+	if(pasajeroUno != NULL && pasajeroDos != NULL)
+	{
+		if(Passenger_getId(pasajeroUno, &idPasajeroUno) == 0)
+		{
+			if(Passenger_getId(pasajeroDos, &idPasajeroDos) == 0)
+			{
+				if(idPasajeroUno > idPasajeroDos)
+				{
+					retorno = 1;
+				}
+				else
+				{
+					retorno = -1;
+				}
+			}
+		}
+	}
+
+	return retorno;
+}
+
+int Passenger_sortByApellido(void* pasajeroUno, void* pasajeroDos)
+{
+	int retorno = -1;
+	char apellidoAuxUno[TAM_NOMBRES];
+	char nombreAuxUno[TAM_NOMBRES];
+	char apellidoAuxDos[TAM_NOMBRES];
+	char nombreAuxDos[TAM_NOMBRES];
+
+	if(pasajeroUno != NULL && pasajeroDos != NULL)
+	{
+		if(Passenger_getApellido(pasajeroUno, apellidoAuxUno) == 0)
+		{
+			if(Passenger_getApellido(pasajeroDos, apellidoAuxDos) == 0)
+			{
+				retorno = strcmp(apellidoAuxUno, apellidoAuxDos);
+				if(retorno == 0)
+				{
+					if(Passenger_getNombre(pasajeroUno, nombreAuxUno) == 0)
+					{
+						if(Passenger_getNombre(pasajeroDos, nombreAuxDos) == 0)
+						{
+							retorno = strcmp(nombreAuxUno, nombreAuxDos);
+							if(retorno == 0)
+							{
+								retorno = Passenger_sortById(pasajeroUno, pasajeroDos);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return retorno;
+}
+
+int Passenger_sortByTipoPasajero(void* pasajeroUno, void* pasajeroDos)
+{
+	int retorno = -1;
+	int tipoPasajeroUno;
+	int tipoPasajeroDos;
+
+	if(pasajeroUno != NULL && pasajeroDos != NULL)
+	{
+		if(Passenger_getTipoPasajero(pasajeroUno, &tipoPasajeroUno) == 0)
+		{
+			if(Passenger_getTipoPasajero(pasajeroDos, &tipoPasajeroDos) == 0)
+			{
+				if(tipoPasajeroUno > tipoPasajeroDos)
+				{
+					retorno = 1;
+				}
+				else
+				{
+					if(tipoPasajeroDos > tipoPasajeroUno)
+					{
+						retorno = -1;
+					}
+					else
+					{
+						retorno = Passenger_sortByApellido(pasajeroUno, pasajeroDos);
+					}
+				}
+			}
+		}
+	}
+
+	return retorno;
+}
+
+int Passenger_sortByCodigoVuelo(void* pasajeroUno, void* pasajeroDos)
+{
+	int retorno = -1;
+	char codigoVueloAuxUno[TAM_RESTODATOS];
+	char codigoVueloAuxDos[TAM_RESTODATOS];
+
+	if(pasajeroUno != NULL && pasajeroDos != NULL)
+	{
+		if(Passenger_getCodigoVuelo(pasajeroUno, codigoVueloAuxUno) == 0)
+		{
+			if(Passenger_getCodigoVuelo(pasajeroDos, codigoVueloAuxDos) == 0)
+			{
+				retorno = strcmp(codigoVueloAuxUno, codigoVueloAuxDos);
+				if(retorno == 0)
+				{
+					retorno = Passenger_sortByApellido(pasajeroUno, pasajeroDos);
+				}
+			}
+		}
+	}
+
+	return retorno;
 }

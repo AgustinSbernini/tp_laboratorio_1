@@ -24,6 +24,7 @@ int controller_loadFromText(char* path , LinkedList* pArrayListPassenger)
 		{
 			FILE* pArchivo;
 			pArchivo = fopen (path,"r");
+
 			if(pArchivo != NULL)
 			{
 				if(parser_PassengerFromText(pArchivo, pArrayListPassenger) == 0)
@@ -31,6 +32,7 @@ int controller_loadFromText(char* path , LinkedList* pArrayListPassenger)
 					retorno = 0;
 				}
 			}
+
 			fclose(pArchivo);
 		}
 	}
@@ -384,6 +386,7 @@ int controller_removePassenger(LinkedList* pArrayListPassenger)
 							{
 								if(ll_remove(pArrayListPassenger, index) == 0)
 								{
+									Passenger_delete(pasajeroAux);
 									retorno = 0;
 								}
 							}
@@ -429,10 +432,14 @@ int controller_ListPassenger(LinkedList* pArrayListPassenger)
 
 		cantElementosPasajeros = ll_len(pArrayListPassenger);
 
-		for(int i = 0; i < cantElementosPasajeros; i++)
+		if(cantElementosPasajeros > 0)
 		{
-			unPasajero = (Passenger*) ll_get(pArrayListPassenger, i);
-			Passenger_printOne(unPasajero);
+			for(int i = 0; i < cantElementosPasajeros; i++)
+			{
+				unPasajero = (Passenger*) ll_get(pArrayListPassenger, i);
+				Passenger_printOne(unPasajero);
+			}
+			retorno = 0;
 		}
 	}
 
@@ -449,6 +456,48 @@ int controller_ListPassenger(LinkedList* pArrayListPassenger)
 int controller_sortPassenger(LinkedList* pArrayListPassenger)
 {
 	int retorno = -1;
+	int orden;
+	int criterio;
+
+	if(pArrayListPassenger != NULL)
+	{
+		utn_getInt(&criterio, "\nOpciones de ordenamiento:\n"
+				"  1- Ordenar por id.\n"
+				"  2- Ordenar por Apellido.\n"
+				"  3- Ordenar por tipo de pasajero.\n"
+				"  4- Ordenar por codigo de vuelo.\n"
+				"Como desea ordenar la lista de pasajeros? ", "Error. Ingrese una opción valida.\n", 1, 4);
+		utn_getInt(&orden, "Ingrese 1 para orden ascendente o 0 para orden desencente: ", "Error. Ingrese una opción valida.\n", 0, 1);
+
+		switch(criterio)
+		{
+		case 1:
+			if(ll_sort(pArrayListPassenger, Passenger_sortById, orden) == 0)
+			{
+				retorno = 1;
+			}
+			break;
+		case 2:
+			if(ll_sort(pArrayListPassenger, Passenger_sortByApellido, orden) == 0)
+			{
+				retorno = 2;
+			}
+			break;
+		case 3:
+			if(ll_sort(pArrayListPassenger, Passenger_sortByTipoPasajero, orden) == 0)
+			{
+				retorno = 3;
+			}
+			break;
+		case 4:
+			if(ll_sort(pArrayListPassenger, Passenger_sortByCodigoVuelo, orden) == 0)
+			{
+				retorno = 4;
+			}
+			break;
+		}
+	}
+
     return retorno;
 }
 
@@ -459,7 +508,7 @@ int controller_sortPassenger(LinkedList* pArrayListPassenger)
  * \return int
  *
  */
-int controller_saveAsText(char* path , LinkedList* pArrayListPassenger)
+int controller_saveAsText(char* path , LinkedList* pArrayListPassenger, int abiertoPreviamente)
 {
 	int retorno = -1;
 
@@ -468,19 +517,87 @@ int controller_saveAsText(char* path , LinkedList* pArrayListPassenger)
 		if (path != NULL)
 		{
 			FILE* pArchivo;
-			pArchivo = fopen (path,"w");
+			Passenger* pasajeroAux;
+			int len;
+			int idAux;
+			char nombreAux[TAM_NOMBRES];
+			char apellidoAux[TAM_NOMBRES];
+			float precioAux;
+			int tipoPasajeroAux;
+			char tipoPasajeroConvertido[TAM_RESTODATOS];
+			char codigoVueloAux[TAM_RESTODATOS];
+			char estadoVueloAux[TAM_RESTODATOS];
 
-			if(pArchivo != NULL)
+
+			if(abiertoPreviamente == 1)
 			{
-//				if(parser_PassengerFromText(pArchivo, pArrayListPassenger) == 0)
-//				{
-//					retorno = 0;
-//				}
+				pArchivo = fopen (path,"w");
+			}
+			else
+			{
+				pArchivo = fopen (path,"a");
+			}
+
+			len = ll_len(pArrayListPassenger);
+			if(len > 0)
+			{
+				if(pArchivo != NULL)
+				{
+					if(abiertoPreviamente == 1)
+					{
+						fprintf(pArchivo,"id,name,lastname,price,flycode,typePassenger,statusFlight\n");
+					}
+
+					for(int i = 0; i < len; i++)
+					{
+						pasajeroAux = ll_get(pArrayListPassenger, i);
+						if(pasajeroAux != NULL)
+						{
+							if(Passenger_getId(pasajeroAux, &idAux) == 0)
+							{
+								if(Passenger_getNombre(pasajeroAux, nombreAux) == 0)
+								{
+									if(Passenger_getApellido(pasajeroAux, apellidoAux) == 0)
+									{
+										if(Passenger_getPrecio(pasajeroAux, &precioAux) == 0)
+										{
+											if(Passenger_getCodigoVuelo(pasajeroAux, codigoVueloAux) == 0)
+											{
+												if(Passenger_getTipoPasajero(pasajeroAux, &tipoPasajeroAux) == 0)
+												{
+													if(tipoPasajeroAux == 1)
+													{
+														strcpy(tipoPasajeroConvertido, "FirstClass");
+													}
+													else
+													{
+														if(tipoPasajeroAux == 2)
+														{
+															strcpy(tipoPasajeroConvertido, "ExecutiveClass");
+														}
+														else
+														{
+															strcpy(tipoPasajeroConvertido, "EconomyClass");
+														}
+													}
+													if(Passenger_getEstadoVuelo(pasajeroAux, estadoVueloAux) == 0)
+													{
+														fprintf(pArchivo,"%d,%s,%s,%.0f,%s,%s,%s\n",idAux,nombreAux,apellidoAux,precioAux,codigoVueloAux,tipoPasajeroConvertido,estadoVueloAux);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					retorno = 0;
+				}
 			}
 			fclose(pArchivo);
 		}
 	}
-
     return retorno;
 }
 
@@ -497,3 +614,48 @@ int controller_saveAsBinary(char* path , LinkedList* pArrayListPassenger)
     return retorno;
 }
 
+int controller_controlarId(char* path, LinkedList* pArrayListPassenger)
+{
+	int retorno = -1;
+
+	if(pArrayListPassenger != NULL)
+	{
+		if(path != NULL)
+		{
+			FILE* pArchivo;
+			Passenger* pasajeroAux;
+			pArchivo = fopen (path,"r");
+			char buffer[1000];
+			int contador = 0;
+			int len;
+
+			if(pArchivo != NULL)
+			{
+				fscanf(pArchivo,"%[^\n]\n", buffer);
+				while(1)
+				{
+					fscanf(pArchivo,"%[^\n]\n", buffer);
+					contador++;
+					if(feof(pArchivo) != 0)
+					{
+						break;
+					}
+				}
+				len = ll_len(pArrayListPassenger);
+
+				for(int i = 0; i < len; i++)
+				{
+					pasajeroAux = ll_get(pArrayListPassenger, i);
+					Passenger_setId(pasajeroAux, i + contador);
+					ll_set(pArrayListPassenger, i, pasajeroAux);
+				}
+
+				retorno = 0;
+			}
+
+			fclose(pArchivo);
+		}
+	}
+
+    return retorno;
+}

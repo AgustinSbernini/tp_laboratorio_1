@@ -34,11 +34,13 @@ int main()
 {
     int option;
     int guardado = 1;
+    int len;
     int cargarDatos = 0;
     int contadorPasajerosAgregados = 0;
     int contadorPasajerosBorrados = 0;
     int errorEdit;
     int errorRemover;
+    int opcionesSort;
 //    char* path = "data.csv";
 
     LinkedList* listaPasajeros = ll_newLinkedList();
@@ -58,6 +60,7 @@ int main()
 							"  9- Guardar los datos de los pasajeros en el archivo data.csv (modo binario).\n"
 							"  10- Salir.\n"
 							"Elija una opción: ", "\nError. Elija una opción valida.\n",1,10);
+    	len = ll_len(listaPasajeros);
         switch(option)
         {
             case 1:
@@ -111,9 +114,10 @@ int main()
             	{
             		printf("\nNo se ha podido agregar al pasajero.\n");
             	}
+            	printf("\nVolviendo al menu principal.\n");
 				break;
             case 4:
-            	if(ll_len(listaPasajeros) != 0)
+            	if(len != 0)
             	{
             		errorEdit = controller_editPassenger(listaPasajeros);
             		switch(errorEdit)
@@ -135,6 +139,7 @@ int main()
             	{
             		printf("\nTodavía no ingresó ningún pasajero.\n");
             	}
+            	printf("\nVolviendo al menu principal.\n");
 				break;
             case 5:
             	errorRemover = controller_removePassenger(listaPasajeros);
@@ -158,14 +163,50 @@ int main()
             	printf("\nVolviendo al menu principal.\n");
 				break;
             case 6:
-            	controller_ListPassenger(listaPasajeros);
+            	if(controller_ListPassenger(listaPasajeros) != 0)
+            	{
+            		printf("\nError. La lista se encuentra vacía.\n");
+					printf("\nVolviendo al menu principal.\n");
+            	}
 				break;
             case 7:
-            	guardado = 0;
+            	opcionesSort = controller_sortPassenger(listaPasajeros);
+            	switch(opcionesSort)
+            	{
+            	case 1:
+            		printf("\nSe ordenó correctamente los pasajeros por id.\n");
+            		guardado = 0;
+            		break;
+            	case 2:
+            		printf("\nSe ordenó correctamente los pasajeros por apellido.\n");
+            		guardado = 0;
+            		break;
+            	case 3:
+            		printf("\nSe ordenó correctamente los pasajeros por tipo de pasajero.\n");
+            		guardado = 0;
+            		break;
+            	case 4:
+            		printf("\nSe ordenó correctamente los pasajeros por codigo de vuelo.\n");
+            		guardado = 0;
+            		break;
+            	default:
+            		printf("\nError. No se pudo ordenar correctamente los pasajeros.\n");
+            	}
 				break;
             case 8:
-            	printf("\nSe guardo con exito los datos de los pasajeros en el archivo data.csv (modo texto).\n");
-            	guardado = 1;
+            	if(cargarDatos == 0)
+            	{
+            		controller_controlarId("data.csv", listaPasajeros);
+            	}
+            	if(controller_saveAsText("data.csv", listaPasajeros, cargarDatos) == 0)
+            	{
+					printf("\nSe guardo con exito los datos de los pasajeros en el archivo data.csv (modo texto).\n");
+					guardado = 1;
+            	}
+            	else
+            	{
+					printf("\nError. No se pudo guardar los datos de los pasajeros en el archivo data.csv (modo texto).\n");
+            	}
 				break;
             case 9:
 				printf("\nSe guardo con exito los datos de los pasajeros en el archivo data.csv (modo binario).\n");

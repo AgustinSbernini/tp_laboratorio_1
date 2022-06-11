@@ -54,4 +54,9 @@ void Passenger_printOne(Passenger* this);
 
 int Passenger_find(LinkedList* this, int id);
 
+int Passenger_sortById(void* pasajeroUno, void* pasajeroDos);
+int Passenger_sortByApellido(void* pasajeroUno, void* pasajeroDos);
+int Passenger_sortByTipoPasajero(void* pasajeroUno, void* pasajeroDos);
+int Passenger_sortByCodigoVuelo(void* pasajeroUno, void* pasajeroDos);
+
 #endif /* PASSENGER_H_ */

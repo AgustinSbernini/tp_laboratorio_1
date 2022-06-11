@@ -999,3 +999,4 @@ id,name,lastname,price,flycode,typePassenger,statusFlight
 998,Jaye,Gutiérrez,25000,MM0987B,EconomyClass,En Horario
 999,Tamarra,Navarro,15000,MM0987B,EconomyClass,En Horario
 1000,Saleem,Torres,20000,MM0987B,EconomyClass,En Horario
+1001,Agustin,Sbernini,45000,AR2254A,FirstClass,Aterrizado
