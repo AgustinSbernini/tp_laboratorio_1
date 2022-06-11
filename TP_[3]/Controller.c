@@ -50,6 +50,27 @@ int controller_loadFromText(char* path , LinkedList* pArrayListPassenger)
 int controller_loadFromBinary(char* path , LinkedList* pArrayListPassenger)
 {
 	int retorno = -1;
+
+	if(path != NULL)
+	{
+		if(pArrayListPassenger != NULL)
+		{
+			FILE *pArchivo;
+
+			pArchivo = fopen(path, "rb");
+
+			if(pArchivo != NULL)
+			{
+				if(parser_PassengerFromBinary(pArchivo, pArrayListPassenger) == 0)
+				{
+					retorno = 0;
+				}
+			}
+
+			fclose(pArchivo);
+		}
+	}
+
     return retorno;
 }
 
@@ -60,7 +81,7 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListPassenger)
  * \return int
  *
  */
-int controller_addPassenger(LinkedList* pArrayListPassenger, int contadorBorrados)
+int controller_addPassenger(LinkedList* pArrayListPassenger, int contadorBorrados, int contadorBorradosDespuesDeGuardar, int contadorLista ,int usoGuardarPeroNoCargar, int ultimoId, int cargarDatos)
 {
 	int retorno = -1;
 
@@ -79,9 +100,27 @@ int controller_addPassenger(LinkedList* pArrayListPassenger, int contadorBorrado
 		int len;
 		int r;
 		int id;
+		int difEntreUltIdYContLista;
 
 		len = ll_len(pArrayListPassenger);
-		id = len + 1 + contadorBorrados;
+		difEntreUltIdYContLista = ultimoId - contadorLista;
+
+		if(usoGuardarPeroNoCargar == 2)
+		{
+			if(cargarDatos != 1)
+			{
+				id = 1 + len + contadorLista + difEntreUltIdYContLista + contadorBorradosDespuesDeGuardar;
+			}
+			else
+			{
+				id = 1 + len + difEntreUltIdYContLista + contadorBorradosDespuesDeGuardar;
+			}
+		}
+		else
+		{
+			id = 1 + len + contadorBorrados;
+		}
+
 		itoa(id,idStr,TAM_DECIMAL);
 
 		r = utn_getName(nombre, "Ingrese el nombre del pasajero: ", "Error. Ingrese el nombre correctamente.\n");
@@ -134,39 +173,6 @@ int controller_addPassenger(LinkedList* pArrayListPassenger, int contadorBorrado
     return retorno;
 }
 
-int controller_corregirId(LinkedList* pArrayListPassenger, int cantPasajerosAgregados)
-{
-	int retorno = -1;
-	if(pArrayListPassenger != NULL && cantPasajerosAgregados > 0)
-	{
-		int len;
-		int idInt;
-		Passenger* unPasajeroAux;
-
-		len = ll_len(pArrayListPassenger);
-
-		if(len > 0)
-		{
-			for(int i = 0; i < cantPasajerosAgregados; i++)
-			{
-				unPasajeroAux = ll_get(pArrayListPassenger,i);
-				if(unPasajeroAux != NULL)
-				{
-					idInt = i + len + 1 - cantPasajerosAgregados;
-					if(Passenger_setId(unPasajeroAux, idInt) == 0)
-					{
-						if(ll_set(pArrayListPassenger, i, unPasajeroAux) == 0)
-						{
-							retorno = 0;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return retorno;
-}
 /** \brief Modificar datos de pasajero
  *
  * \param path char*
@@ -195,7 +201,7 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 		len = ll_len(pArrayListPassenger);
 		if(len > 0)
 		{
-			if(utn_getInt(&id,"Ingrese el id del pasajero que desea modificar: ","Error. El id ingresado no es valido.\n", 1, len) == 0)
+			if(utn_getInt(&id,"Ingrese el id del pasajero que desea modificar: ","Error. El id ingresado no es valido.\n", 1, 9999999) == 0)
 			{
 				index = Passenger_find(pArrayListPassenger, id);
 				if(index > -1)
@@ -203,10 +209,10 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 					pasajeroAux = ll_get(pArrayListPassenger, index);
 					if(pasajeroAux != NULL)
 					{
-						printf("El pasajero que seleccionó para modificar es:\n");
+						printf("\nEl pasajero que seleccionó para modificar es:\n");
 						Passenger_printOne(pasajeroAux);
 						do{
-							utn_getInt(&campoModificar, "Campos que se pueden modificar:\n"
+							utn_getInt(&campoModificar, "\nCampos que se pueden modificar:\n"
 									"  1- Nombre.\n"
 									"  2- Apellido.\n"
 									"  3- Precio del Vuelo.\n"
@@ -223,6 +229,7 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 									if(Passenger_setNombre(pasajeroAux, nombre) == 0)
 									{
 										printf("\nEl nombre del pasajero fue modificado correctamente.\n");
+										retorno = 0;
 									}
 									else
 									{
@@ -240,6 +247,7 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 									if(Passenger_setApellido(pasajeroAux, apellido) == 0)
 									{
 										printf("\nEl apellido del pasajero fue modificado correctamente.\n");
+										retorno = 0;
 									}
 									else
 									{
@@ -257,6 +265,7 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 									if(Passenger_setPrecio(pasajeroAux, atof(precio)) == 0)
 									{
 										printf("\nEl precio del vuelo fue modificado correctamente.\n");
+										retorno = 0;
 									}
 									else
 									{
@@ -274,6 +283,7 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 								if(Passenger_setTipoPasajero(pasajeroAux, tipoPasajero) == 0)
 								{
 									printf("\nEl tipo de pasajero fue modificado correctamente.\n");
+									retorno = 0;
 								}
 								else
 								{
@@ -285,6 +295,7 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 								if(Passenger_setCodigoVuelo(pasajeroAux, codigo) == 0)
 								{
 									printf("\nEl codigo del vuelo fue modificado correctamente.\n");
+									retorno = 0;
 								}
 								else
 								{
@@ -311,6 +322,7 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 								if(Passenger_setEstadoVuelo(pasajeroAux, estadoVueloStr) == 0)
 								{
 									printf("\nEl estado del vuelo fue modificado correctamente.\n");
+									retorno = 0;
 								}
 								else
 								{
@@ -321,12 +333,12 @@ int controller_editPassenger(LinkedList* pArrayListPassenger)
 								if(ll_set(pArrayListPassenger, index, pasajeroAux) == 0)
 								{
 									printf("\nEl pasajero fue modificado con exito.\n");
+									retorno = 0;
 								}
 								else
 								{
 									printf("\nError. No se pudo modificar el pasajero\n");
 								}
-								printf("\nVolviendo al menú principal.\n");
 							}
 						}while(campoModificar != 7);
 					}
@@ -368,7 +380,7 @@ int controller_removePassenger(LinkedList* pArrayListPassenger)
 		len = ll_len(pArrayListPassenger);
 		if(len > 0)
 		{
-			if(utn_getInt(&id,"Ingrese el id del pasajero que desea dar de baja: ","Error. El id ingresado no es valido.\n", 1, len) == 0)
+			if(utn_getInt(&id,"Ingrese el id del pasajero que desea dar de baja: ","Error. El id ingresado no es valido.\n", 0, 999999) == 0)
 			{
 				index = Passenger_find(pArrayListPassenger, id);
 				if(index > -1)
@@ -608,13 +620,67 @@ int controller_saveAsText(char* path , LinkedList* pArrayListPassenger, int abie
  * \return int
  *
  */
-int controller_saveAsBinary(char* path , LinkedList* pArrayListPassenger)
+int controller_saveAsBinary(char* path , LinkedList* pArrayListPassenger, int abiertoPreviamente)
 {
 	int retorno = -1;
+
+	if(pArrayListPassenger != NULL)
+	{
+		if (path != NULL)
+		{
+			FILE* pArchivo;
+			Passenger* pasajeroAux;
+			int len;
+//			char* primeraLinea = "id,name,lastname,price,flycode,typePassenger,statusFlight\n";
+//			int lenPrimeraLinea;
+
+//			if(abiertoPreviamente == 1)
+//			{
+				pArchivo = fopen (path,"wb");
+//			}
+//			else
+//			{
+//				pArchivo = fopen (path,"ab");
+//			}
+
+			len = ll_len(pArrayListPassenger);
+			if(len > 0)
+			{
+				if(pArchivo != NULL)
+				{
+//					if(abiertoPreviamente == 1)
+//					{
+//						lenPrimeraLinea = strlen(primeraLinea);
+//						fwrite(primeraLinea,sizeof(char),lenPrimeraLinea,pArchivo);
+//					}
+
+					for(int i = 0; i < len; i++)
+					{
+						pasajeroAux = ll_get(pArrayListPassenger, i);
+						if(pasajeroAux != NULL)
+						{
+							fwrite(pasajeroAux,sizeof(Passenger),1,pArchivo);
+						}
+					}
+					retorno = 0;
+				}
+			}
+			fclose(pArchivo);
+		}
+	}
     return retorno;
 }
 
-int controller_controlarId(char* path, LinkedList* pArrayListPassenger)
+/**
+ * @brief
+ *
+ * @param path
+ * @param pArrayListPassenger
+ * @param cantAgregados
+ * @param cantBorrados
+ * @return
+ */
+int controller_controlarId(char* path, LinkedList* pArrayListPassenger, int cantAgregados, int cantBorrados, int *pUltimoId)
 {
 	int retorno = -1;
 
@@ -626,31 +692,35 @@ int controller_controlarId(char* path, LinkedList* pArrayListPassenger)
 			Passenger* pasajeroAux;
 			pArchivo = fopen (path,"r");
 			char buffer[1000];
+			char ultimoIdStr[TAM_RESTODATOS];
+			int ultimoIdInt;
 			int contador = 0;
-			int len;
 
 			if(pArchivo != NULL)
 			{
 				fscanf(pArchivo,"%[^\n]\n", buffer);
 				while(1)
 				{
-					fscanf(pArchivo,"%[^\n]\n", buffer);
+					fscanf(pArchivo,"%[^,],%[^\n]\n", ultimoIdStr, buffer);
 					contador++;
 					if(feof(pArchivo) != 0)
 					{
 						break;
 					}
 				}
-				len = ll_len(pArrayListPassenger);
 
-				for(int i = 0; i < len; i++)
+				ultimoIdInt = atoi(ultimoIdStr);
+
+				for(int i = 0; i < cantAgregados - cantBorrados; i++)
 				{
 					pasajeroAux = ll_get(pArrayListPassenger, i);
-					Passenger_setId(pasajeroAux, i + contador);
+					Passenger_setId(pasajeroAux, 1 + i + ultimoIdInt);
 					ll_set(pArrayListPassenger, i, pasajeroAux);
+					printf("\nSe modificó el id de %s %s para agregarse en la lista. Ahora es %d\n",pasajeroAux->nombre,pasajeroAux->apellido,pasajeroAux->id);
 				}
 
-				retorno = 0;
+				*pUltimoId = ultimoIdInt;
+				retorno = contador;
 			}
 
 			fclose(pArchivo);
@@ -658,4 +728,16 @@ int controller_controlarId(char* path, LinkedList* pArrayListPassenger)
 	}
 
     return retorno;
+}
+
+void controller_controlarRepetidos(LinkedList* pArrayListPassenger, int cantAgregados)
+{
+	int len;
+	len = ll_len(pArrayListPassenger);
+
+	for (int i = len; i > len - cantAgregados - 1; i--)
+	{
+		ll_remove(pArrayListPassenger, i);
+	}
+
 }

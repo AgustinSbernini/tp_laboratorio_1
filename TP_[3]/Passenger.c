@@ -65,7 +65,7 @@ int Passenger_find(LinkedList* this, int id)
 		len = ll_len(this);
 		for(int i = 0; i < len; i++)
 		{
-			pasajeroAux = (Passenger*) ll_get(this, i);
+			pasajeroAux = ll_get(this, i);
 			if(pasajeroAux->id == id)
 			{
 				retorno = i;

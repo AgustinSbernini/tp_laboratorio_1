@@ -37,11 +37,15 @@ int main()
     int len;
     int cargarDatos = 0;
     int contadorPasajerosAgregados = 0;
+    int contadorPasajerosAgregadosAntesGuardar = 0;
     int contadorPasajerosBorrados = 0;
+    int contadorPasajerosBorradosDespuesDeGuardar = 0;
     int errorEdit;
     int errorRemover;
     int opcionesSort;
-//    char* path = "data.csv";
+    int controlId = 0;
+    int cantidadPasajerosLista = 0;
+    int ultimoId;
 
     LinkedList* listaPasajeros = ll_newLinkedList();
 
@@ -69,17 +73,22 @@ int main()
 					if(controller_loadFromText("data.csv",listaPasajeros) == 0)
 					{
 						cargarDatos = 1;
-						printf("\nLos datos han sido cargados exitosamente.\n");
-						if(contadorPasajerosAgregados != 0)
+						printf("\nLos datos han sido cargados exitosamente desde el modo texto.\n");
+						if(contadorPasajerosAgregados != 0 && controlId == 0)
 						{
-							if(controller_corregirId(listaPasajeros, contadorPasajerosAgregados) == 0)
+							if(controller_controlarId("data.csv", listaPasajeros, contadorPasajerosAgregados, contadorPasajerosBorrados, &ultimoId) != -1)
 							{
 								printf("\nSe corrigieron los id de los pasajeros agregados anteriormente correctamente.\n");
+								controlId = 1;
 							}
 							else
 							{
 								printf("\nNo se pudieron corregir los id de los pasajeros agregados anteriormente.\n");
 							}
+						}
+						else
+						{
+							controller_controlarRepetidos(listaPasajeros, contadorPasajerosAgregadosAntesGuardar);
 						}
 					}
 					else
@@ -95,20 +104,47 @@ int main()
             case 2:
             	if(cargarDatos == 0)
             	{
-            		printf("\nEntro 2\n");
-					cargarDatos = 1;
+					if(controller_loadFromBinary("data.bin",listaPasajeros) == 0)
+					{
+						cargarDatos = 1;
+						printf("\nLos datos han sido cargados exitosamente desde el modo binario.\n");
+						if(contadorPasajerosAgregados != 0 && controlId == 0)
+						{
+							if(controller_controlarId("data.csv", listaPasajeros, contadorPasajerosAgregados, contadorPasajerosBorrados, &ultimoId) != -1)
+							{
+								printf("\nSe corrigieron los id de los pasajeros agregados anteriormente correctamente.\n");
+								controlId = 1;
+							}
+							else
+							{
+								printf("\nNo se pudieron corregir los id de los pasajeros agregados anteriormente.\n");
+							}
+						}
+						else
+						{
+							controller_controlarRepetidos(listaPasajeros, contadorPasajerosAgregadosAntesGuardar);
+						}
+					}
+					else
+					{
+						printf("\nLos datos no se han podido cargar.\n");
+					}
             	}
             	else
-				{
-					printf("\nYa cargó los datos.\n");
-				}
+            	{
+            		printf("\nYa cargó los datos.\n");
+            	}
             	break;
             case 3:
-            	if(controller_addPassenger(listaPasajeros, contadorPasajerosBorrados) == 0)
+            	if(controller_addPassenger(listaPasajeros, contadorPasajerosBorrados, contadorPasajerosBorradosDespuesDeGuardar, cantidadPasajerosLista, controlId, ultimoId, cargarDatos) == 0)
             	{
             		printf("\nSe ha agregado correctamente el pasajero.\n");
 					guardado = 0;
 					contadorPasajerosAgregados++;
+					if(cargarDatos != 1)
+					{
+						contadorPasajerosAgregadosAntesGuardar++;
+					}
             	}
             	else
             	{
@@ -148,6 +184,10 @@ int main()
             	case 0:
 					contadorPasajerosBorrados++;
 					printf("\nSe ha dado de baja correctamente al pasajero de la lista.\n");
+					if(controlId == 2)
+					{
+						contadorPasajerosBorradosDespuesDeGuardar++;
+					}
 					guardado = 0;
 					break;
             	case -1:
@@ -175,42 +215,47 @@ int main()
             	{
             	case 1:
             		printf("\nSe ordenó correctamente los pasajeros por id.\n");
-            		guardado = 0;
             		break;
             	case 2:
             		printf("\nSe ordenó correctamente los pasajeros por apellido.\n");
-            		guardado = 0;
             		break;
             	case 3:
             		printf("\nSe ordenó correctamente los pasajeros por tipo de pasajero.\n");
-            		guardado = 0;
             		break;
             	case 4:
             		printf("\nSe ordenó correctamente los pasajeros por codigo de vuelo.\n");
-            		guardado = 0;
             		break;
             	default:
             		printf("\nError. No se pudo ordenar correctamente los pasajeros.\n");
             	}
 				break;
             case 8:
-            	if(cargarDatos == 0)
+            case 9:
+            	if(cargarDatos == 0 && controlId == 0)
             	{
-            		controller_controlarId("data.csv", listaPasajeros);
+            		cantidadPasajerosLista = controller_controlarId("data.csv", listaPasajeros, contadorPasajerosAgregados, contadorPasajerosBorrados, &ultimoId);
+            		if(cantidadPasajerosLista != -1)
+            		{
+						controlId = 2;
+            		}
+            		else
+            		{
+            			printf("\nError.No se pudo corregir los id de los nuevos pasajeros ingresados al guardar.\n");
+            		}
             	}
+            	ll_sort(listaPasajeros, Passenger_sortById, 1);
             	if(controller_saveAsText("data.csv", listaPasajeros, cargarDatos) == 0)
             	{
-					printf("\nSe guardo con exito los datos de los pasajeros en el archivo data.csv (modo texto).\n");
-					guardado = 1;
+            		if(controller_saveAsBinary("data.bin", listaPasajeros, cargarDatos) == 0)
+            		{
+						printf("\nSe guardo con exito los datos de los pasajeros en el archivo data.csv.\n");
+						guardado = 1;
+            		}
             	}
             	else
             	{
-					printf("\nError. No se pudo guardar los datos de los pasajeros en el archivo data.csv (modo texto).\n");
+					printf("\nError. No se pudo guardar los datos de los pasajeros en el archivo data.csv.\n");
             	}
-				break;
-            case 9:
-				printf("\nSe guardo con exito los datos de los pasajeros en el archivo data.csv (modo binario).\n");
-            	guardado = 1;
 				break;
             default:
             	if(guardado == 0)
@@ -224,7 +269,6 @@ int main()
         }
     }while(option != 10 || guardado != 1);
 
-    printf("ya se cerro");
     return 0;
 }
 

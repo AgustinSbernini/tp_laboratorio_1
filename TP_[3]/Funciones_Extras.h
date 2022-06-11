@@ -5,7 +5,6 @@
 ///
 /// @param codigoDeVuelo puntero que devuelve el codigo de vuelo ingresado
 /// @param mensaje mensaje que donde se imprime la peticion
-
 void pedirCodigoVuelo(char codigoDeVuelo[10], char* mensaje);
 
 /// @brief pide al usuario un dato a traves de string y cambia el ultimo bit de '\n' a '\0'
@@ -42,21 +41,19 @@ int esNumerica(char* cadena);
 
 int utn_getInt(int *pResultado, char *mensaje, char *mensajeError, int minimo, int maximo);
 
-/// @brief transforma el string obtenido de esNumerica y myGets a un flotante
+/// @brief verifica el string obtenido de esNumerica y myGets
 ///
-/// @param pResultado pResultado puntero por donde se devuelve el flotante obtenido
+/// @param pResultado pResultado puntero por donde se devuelve el string obtenido
 /// @return devuelve -1 si hubo un error en esta funcion o en alguna de las anteriores - 0 si esta ok
 
 int getFloat(char *pResultado);
 
 /// @brief pide al usuario que ingrese un flotante usando getFloat, verifica que este dentro de los parametros establecidos
-/// 	   y duevle el flotante generado
+/// 	   y duevle el string generado
 ///
-/// @param pResultado puntero por el cual devuelve el flotante generado
+/// @param pResultado puntero por el cual devuelve el string generado
 /// @param mensaje mensaje que se imprime para pedir el dato al usuario
 /// @param mensajeError mensaje que se imprime si no se ingresa un flotante
-/// @param minimo parametro que delimita el numero minimo a ingresar
-/// @param maximo parametro que delimita el numero maximo a ingresar
 /// @return devuelve -1 si hubo un error - 0 si esta ok
 
 int utn_getFloat(char *pResultado, char *mensaje, char *mensajeError);
