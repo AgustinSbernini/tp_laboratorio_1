@@ -1,3 +1,23 @@
+/********************************************************************************************************
+*   Programa: TP 4
+*
+*	Objetivo:
+*		El objetivo del siguiente trabajo es que el alumno sea capaz de demostrar que puede integrar
+*		lo aprendido durante la cursada en un caso real.
+*		Los conocimientos necesarios para la realización del TP son los siguientes:
+*			• Manejo de punteros.
+*			• Manejo de arrays.
+*			• Manejo de estructuras.
+*			• Manejo de memoria dinámica.
+*
+*		Etapa 1: Se deberá desarrollar una biblioteca LinkedList.c y LinkedList.h la cual contendrá el
+*		tipo de dato LinkedList, tal que cumpla con la especificación del documento, con las funciones
+*		mínimas requeridas.
+*
+*	Version: 1.0 del 14 de Junio de 2022
+*	Autor: Agustin Sbernini
+*
+********************************************************************************************************/
 /*
     utest example : Unit test examples.
     Copyright (C) <2018>  <Mauricio Davila>
