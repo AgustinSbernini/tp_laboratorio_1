@@ -55,22 +55,24 @@ int ll_len(LinkedList* this)
  */
 static Node* getNode(LinkedList* this, int nodeIndex)
 {
-	Node* indice = NULL;
+	Node* nodoAux = NULL;
 	int len;
+
 	if(this != NULL && nodeIndex >= 0)
 	{
 		len = ll_len(this);
+
 		if(len >= 0 && nodeIndex < len)
 		{
 			for(int i = 0; i < len; i++)
 			{
 				if(i == 0)
 				{
-					indice = this->pFirstNode;
+					nodoAux = this->pFirstNode;
 				}
 				else
 				{
-					indice = indice->pNextNode;
+					nodoAux = nodoAux->pNextNode;
 				}
 				if(i == nodeIndex)
 				{
@@ -80,7 +82,7 @@ static Node* getNode(LinkedList* this, int nodeIndex)
 		}
 	}
 
-    return indice;
+    return nodoAux;
 }
 
 /** \brief  Permite realizar el test de la funcion getNode la cual es privada
@@ -111,9 +113,11 @@ static int addNode(LinkedList* this, int nodeIndex,void* pElement)
     int retorno = -1;
     Node* nuevoNodo;
     int len;
+
     if(this != NULL)
     {
 		len = ll_len(this);
+
 		if(len >= 0)
 		{
 			if(nodeIndex > -1 && nodeIndex <= len)
@@ -131,6 +135,7 @@ static int addNode(LinkedList* this, int nodeIndex,void* pElement)
 						{
 							nuevoNodo->pNextNode = NULL;
 						}
+
 						this->size++;
 						this->pFirstNode = nuevoNodo;
 						nuevoNodo->pElement = pElement;
@@ -139,6 +144,7 @@ static int addNode(LinkedList* this, int nodeIndex,void* pElement)
 					{
 						Node* indice;
 						indice = getNode(this, nodeIndex - 1);
+
 						if(indice != NULL)
 						{
 							this->size++;
@@ -186,7 +192,9 @@ int ll_add(LinkedList* this, void* pElement)
     if(this != NULL)
     {
     	int len;
+
     	len = ll_len(this);
+
     	if(len >= 0)
     	{
 			if(addNode(this, len, pElement) == 0)
@@ -277,24 +285,32 @@ int ll_remove(LinkedList* this,int index)
 
     if(this != NULL && index >= 0 && index < len)
     {
-    	Node* posteriorNodo;
     	Node* anteriorNodo;
+    	Node* nodoActual;
 
-		posteriorNodo = getNode(this, index + 1);
-    	if(index == 0)
-    	{
-    		this->pFirstNode = posteriorNodo;
-    		this->size--;
-    		retorno = 0;
-    	}
-    	else
-    	{
-			anteriorNodo = getNode(this, index - 1);
-			anteriorNodo->pNextNode = posteriorNodo;
-			this->size--;
+		nodoActual = getNode(this, index);
+
+		if(nodoActual != NULL)
+		{
+			if(index == 0)
+			{
+				this->pFirstNode = nodoActual->pNextNode;
+			}
+			else
+			{
+				anteriorNodo = getNode(this, index - 1);
+
+				if(anteriorNodo != NULL)
+				{
+					anteriorNodo->pNextNode = nodoActual->pNextNode;
+				}
+			}
+
 			retorno = 0;
-    	}
-    }
+			this->size--;
+			free(nodoActual);
+		}
+	}
 
     return retorno;
 }
@@ -310,11 +326,17 @@ int ll_remove(LinkedList* this,int index)
 int ll_clear(LinkedList* this)
 {
     int retorno = -1;
+    int len;
 
     if(this != NULL)
     {
-    	this->pFirstNode = NULL;
-    	this->size = 0;
+    	len = ll_len(this);
+
+    	for(int i = 0; i < len; i++)
+    	{
+    		ll_remove(this, i);
+    	}
+
     	retorno = 0;
     }
 
@@ -335,6 +357,7 @@ int ll_deleteLinkedList(LinkedList* this)
 
     if(this != NULL)
     {
+    	ll_clear(this);
     	free(this);
     	retorno = 0;
     }
@@ -357,7 +380,9 @@ int ll_indexOf(LinkedList* this, void* pElement)
     {
     	Node* nodo;
     	int contador = 0;
+
     	nodo = this->pFirstNode;
+
     	while(nodo != NULL)
     	{
 			if(nodo->pElement == pElement)
@@ -426,22 +451,26 @@ int ll_push(LinkedList* this, int index, void* pElement)
 
     	nodoAgregar = (Node*) malloc (sizeof(Node));
     	nodoPosterior = getNode(this, index);
-    	if(index == 0)
+
+    	if(nodoAgregar != NULL)
     	{
-    		nodoAgregar->pNextNode = nodoPosterior;
-    		nodoAgregar->pElement = pElement;
-    		this->pFirstNode = nodoAgregar;
-    		this->size++;
-    		retorno = 0;
-    	}
-    	else
-    	{
-    		nodoAnterior = getNode(this, index - 1);
-    		nodoAgregar->pNextNode = nodoPosterior;
-    		nodoAgregar->pElement = pElement;
-    		nodoAnterior->pNextNode = nodoAgregar;
-    		this->size++;
-    		retorno = 0;
+			if(index == 0)
+			{
+				this->pFirstNode = nodoAgregar;
+			}
+			else
+			{
+				nodoAnterior = getNode(this, index - 1);
+				if(nodoAnterior != NULL)
+				{
+					nodoAnterior->pNextNode = nodoAgregar;
+				}
+			}
+
+			nodoAgregar->pNextNode = nodoPosterior;
+			nodoAgregar->pElement = pElement;
+			this->size++;
+			retorno = 0;
     	}
     }
 
@@ -468,26 +497,26 @@ void* ll_pop(LinkedList* this,int index)
     {
     	Node* nodoPop;
     	Node* nodoAnterior;
-    	Node* nodoPosterior;
 
     	nodoPop = getNode(this, index);
-    	nodoPosterior = getNode(this, index + 1);
+
     	if(nodoPop != NULL)
     	{
 			if(index == 0)
 			{
-				this->pFirstNode = nodoPosterior;
-				this->size--;
-				retorno = nodoPop->pElement;
+				this->pFirstNode = nodoPop->pNextNode;
 			}
 			else
 			{
 				nodoAnterior = getNode(this, index - 1);
-
-				nodoAnterior->pNextNode = nodoPosterior;
-				this->size--;
-				retorno = nodoPop->pElement;
+				if(nodoAnterior != NULL)
+				{
+					nodoAnterior->pNextNode = nodoPop->pNextNode;
+				}
 			}
+
+			this->size--;
+			retorno = nodoPop->pElement;
     	}
     }
     return retorno;
@@ -511,6 +540,7 @@ int ll_contains(LinkedList* this, void* pElement)
     	Node* nodo;
     	nodo = this->pFirstNode;
 		retorno = 0;
+
     	while(nodo != NULL)
     	{
     		if(nodo->pElement == pElement)
@@ -548,7 +578,7 @@ int ll_containsAll(LinkedList* this,LinkedList* this2)
 		nodo = this->pFirstNode;
 		nodo2 = this2->pFirstNode;
 
-		retorno = 0;
+		retorno = 1;
 
 		while(nodo != NULL && nodo2 != NULL)
 		{
@@ -561,7 +591,6 @@ int ll_containsAll(LinkedList* this,LinkedList* this2)
 			{
 				nodo = nodo->pNextNode;
 				nodo2 = nodo2->pNextNode;
-				retorno = 1;
 			}
 		}
 
@@ -595,6 +624,7 @@ LinkedList* ll_subList(LinkedList* this,int from,int to)
     	for(int i = from; i < to; i++)
     	{
 			nodoAux = getNode(this, i);
+
 			if(nodoAux != NULL)
 			{
 				if(i == from)
@@ -676,7 +706,7 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order)
 					}
 				}
 			}
-			if(order == 0)
+			else
 			{
 				for(int i = 0; i < len - 1; i++)
 				{
@@ -685,6 +715,7 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order)
 						nodo1 = ll_get(this, i);
 						nodo2 = ll_get(this, j);
 						respuesta = pFunc(nodo1,nodo2);
+
 						if(respuesta < 0)
 						{
 							ll_set(this, i, nodo2);
