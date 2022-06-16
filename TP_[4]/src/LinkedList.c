@@ -682,47 +682,39 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order)
     	if(pFunc != NULL && (order == 0 || order == 1))
     	{
 			int len;
-			void* nodo1;
-			void* nodo2;
+			void* primerElemento;
+			void* segundoElemento;
 			int respuesta;
 
 			len = ll_len(this);
 
-			if(order == 1)
+			for(int i = 0; i < len - 1; i++)
 			{
-				for(int i = 0; i < len - 1; i++)
+				for(int j = i + 1; j < len; j++)
 				{
-					for(int j = i + 1; j < len; j++)
+					primerElemento = ll_get(this, i);
+					segundoElemento = ll_get(this, j);
+
+					respuesta = pFunc(primerElemento,segundoElemento);
+
+					if(order == 1)
 					{
-						nodo1 = ll_get(this, i);
-						nodo2 = ll_get(this, j);
-						respuesta = pFunc(nodo1,nodo2);
 						if(respuesta > 0)
 						{
-							ll_set(this, i, nodo2);
-							ll_set(this, j, nodo1);
+							ll_set(this, i, segundoElemento);
+							ll_set(this, j, primerElemento);
 						}
-						retorno = 0;
 					}
-				}
-			}
-			else
-			{
-				for(int i = 0; i < len - 1; i++)
-				{
-					for(int j = i + 1; j < len; j++)
+					else
 					{
-						nodo1 = ll_get(this, i);
-						nodo2 = ll_get(this, j);
-						respuesta = pFunc(nodo1,nodo2);
-
 						if(respuesta < 0)
 						{
-							ll_set(this, i, nodo2);
-							ll_set(this, j, nodo1);
+							ll_set(this, i, segundoElemento);
+							ll_set(this, j, primerElemento);
 						}
-						retorno = 0;
 					}
+
+					retorno = 0;
 				}
 			}
     	}
