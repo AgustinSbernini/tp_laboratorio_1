@@ -572,28 +572,19 @@ int ll_containsAll(LinkedList* this,LinkedList* this2)
 
     if(this != NULL && this2 != NULL)
     {
-    	Node* nodo;
-    	Node* nodo2;
-
-		nodo = this->pFirstNode;
-		nodo2 = this2->pFirstNode;
+    	int len;
 
 		retorno = 1;
+    	len = ll_len(this2);
 
-		while(nodo != NULL && nodo2 != NULL)
+		for(int i = 0; i < len; i++)
 		{
-			if(nodo->pElement != nodo2->pElement)
+			if(ll_contains(this, ll_get(this2, i)) != 1)
 			{
 				retorno = 0;
 				break;
 			}
-			else
-			{
-				nodo = nodo->pNextNode;
-				nodo2 = nodo2->pNextNode;
-			}
 		}
-
     }
     return retorno;
 }
@@ -615,7 +606,7 @@ LinkedList* ll_subList(LinkedList* this,int from,int to)
 
     len = ll_len(this);
 
-    if(this != NULL && from >= 0 && from < len && to > from && to <= len)
+    if(this != NULL && from >= 0 && from < to && to <= len)
     {
     	Node* nodoAux;
 
@@ -630,13 +621,13 @@ LinkedList* ll_subList(LinkedList* this,int from,int to)
 				if(i == from)
 				{
 					cloneArray->pFirstNode = nodoAux;
-					cloneArray->size++;
 				}
 				else
 				{
-					cloneArray->size++;
 					nodoAux->pNextNode = nodoAux;
 				}
+
+				cloneArray->size++;
 			}
     	}
     }
@@ -658,8 +649,7 @@ LinkedList* ll_clone(LinkedList* this)
 
     if(this != NULL)
     {
-    	cloneArray = ll_newLinkedList();
-    	cloneArray = this;
+    	cloneArray = ll_subList(this, 0, ll_len(this));
     }
 
     return cloneArray;
@@ -724,3 +714,78 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order)
 
 }
 
+/**
+ * @brief * Completa un campo del elemento, recibiendo como parámetro
+ * 			la función que sera la encargada de calcular el valor de ese campo.
+ * 			Verificando que tanto el puntero this como el puntero a la funcion
+ * 			pFunc sean distintos de NULL.
+ *
+ * @param this LinkedList* Puntero a la lista
+ * @param pFunc (*pFunc) Puntero a la funcion encargada de calcular el nuevo valor
+ * @return Retorna la lista completa.
+ */
+LinkedList* ll_map(LinkedList* this, void (*pFunc)(void*))
+{
+	LinkedList* listaModificada = NULL;
+
+	if(this != NULL)
+	{
+		if(pFunc != NULL)
+		{
+			int len;
+			len = ll_len(this);
+
+			for(int i = 0; i < len; i++)
+			{
+				pFunc(ll_get(this, i));
+			}
+
+			listaModificada = this;
+		}
+	}
+
+	return listaModificada;
+}
+
+/**
+ * @brief * Filtra la lista con una condición, recibiendo como parámetro
+ * 			la función que sera la encargada de decidir si cada elemento
+ * 			cumple la condición (1) o no (0) y si se agrega a una nueva lista filtrada.
+ * 			Verificando que tanto el puntero this como el puntero a la funcion
+ * 			pFunc sean distintos de NULL.
+ *
+ * @param this LinkedList* Puntero a la lista
+ * @param pFunc (*pFunc) Puntero a la funcion criterio
+ * @return Retorna la lista nueva lista filtrada.
+ */
+LinkedList* ll_filter(LinkedList* this, int(*pFunc)(void*))
+{
+	LinkedList* listaFiltrada = NULL;
+
+	if(this != NULL)
+	{
+		if(pFunc != NULL)
+		{
+			int len;
+			void* pElement;
+
+			len = ll_len(this);
+			listaFiltrada = ll_newLinkedList();
+
+			if(listaFiltrada != NULL)
+			{
+				for(int i = 0; i < len; i++)
+				{
+					pElement = ll_get(this, i);
+
+					if(pFunc(pElement) == 0)
+					{
+						ll_add(listaFiltrada, pElement);
+					}
+				}
+			}
+		}
+	}
+
+	return listaFiltrada;
+}
