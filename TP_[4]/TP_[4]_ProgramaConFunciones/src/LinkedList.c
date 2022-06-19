@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../inc/LinkedList.h"
+#include "LinkedList.h"
 
 
 static Node* getNode(LinkedList* this, int nodeIndex);
@@ -332,11 +332,11 @@ int ll_clear(LinkedList* this)
     {
     	len = ll_len(this);
 
-    	for(int i = 0; i < len; i++)
+    	for(int i = len; i > 0; i--)
     	{
     		ll_remove(this, i);
     	}
-
+    	this->size--;
     	retorno = 0;
     }
 
@@ -535,25 +535,16 @@ int ll_contains(LinkedList* this, void* pElement)
 {
     int retorno = -1;
 
-    if(this != NULL)
-    {
-    	Node* nodo;
-    	nodo = this->pFirstNode;
-		retorno = 0;
+   	if(this != NULL)
+   	{
+   		retorno = 0;
 
-    	while(nodo != NULL)
-    	{
-    		if(nodo->pElement == pElement)
-    		{
-				retorno = 1;
-    			break;
-    		}
-    		else
-    		{
-    			nodo = nodo->pNextNode;
-    		}
-    	}
-    }
+   		if(ll_indexOf(this, pElement) != -1)
+   		{
+   			retorno = 1;
+   		}
+   	}
+
     return retorno;
 }
 
@@ -602,33 +593,21 @@ int ll_containsAll(LinkedList* this,LinkedList* this2)
 LinkedList* ll_subList(LinkedList* this,int from,int to)
 {
     LinkedList* cloneArray = NULL;
+    cloneArray = ll_newLinkedList();
     int len;
+    void* pElement;
 
     len = ll_len(this);
 
     if(this != NULL && from >= 0 && from < to && to <= len)
     {
-    	Node* nodoAux;
-
-    	cloneArray = ll_newLinkedList();
-
     	for(int i = from; i < to; i++)
     	{
-			nodoAux = getNode(this, i);
-
-			if(nodoAux != NULL)
-			{
-				if(i == from)
-				{
-					cloneArray->pFirstNode = nodoAux;
-				}
-				else
-				{
-					nodoAux->pNextNode = nodoAux;
-				}
-
-				cloneArray->size++;
-			}
+    		if(cloneArray != NULL)
+    		{
+    			pElement = ll_get(this,i);
+				ll_add(cloneArray,pElement);
+    		}
     	}
     }
 
@@ -724,10 +703,8 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order)
  * @param pFunc (*pFunc) Puntero a la funcion encargada de calcular el nuevo valor
  * @return Retorna la lista completa.
  */
-LinkedList* ll_map(LinkedList* this, void (*pFunc)(void*))
+void ll_map(LinkedList* this, void (*pFunc)(void*))
 {
-	LinkedList* listaModificada = NULL;
-
 	if(this != NULL)
 	{
 		if(pFunc != NULL)
@@ -739,12 +716,8 @@ LinkedList* ll_map(LinkedList* this, void (*pFunc)(void*))
 			{
 				pFunc(ll_get(this, i));
 			}
-
-			listaModificada = this;
 		}
 	}
-
-	return listaModificada;
 }
 
 /**
